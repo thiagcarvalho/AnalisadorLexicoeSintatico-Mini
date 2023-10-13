@@ -2,11 +2,14 @@ from Tag import Tag
 
 
 class Token:
-    def __init__(self, tag):
+    def __init__(self, tag=0):
         self.tag = tag
 
     def getTag(self):
         return self.tag
+
+    def setTag(self, tag):
+        self.tag = tag
 
     def __str__(self):
         if self.tag == Tag.AND:
@@ -27,8 +30,12 @@ class Token:
             return "true"
         elif self.tag == Tag.WHILE:
             return "while"
+        elif self.tag == Tag.PRG:
+            return "program"
+        elif self.tag == Tag.MOD:
+            return "mod"
         else:
-            return chr(self.tag)
+            return str(self.tag)
 
 
 class Num(Token):
@@ -48,6 +55,9 @@ class Word(Token):
 
     def toString(self):
         return self.lexeme
+
+    def getTag(self):
+        return self.tag
 
 class Words():
     And = Word("and", Tag.AND)

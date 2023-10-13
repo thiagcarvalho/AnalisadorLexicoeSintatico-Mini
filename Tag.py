@@ -17,3 +17,5 @@ class Tag:
     TRUE = 43
     FALSE = 44
     WRITE = 69
+    FIM = -1
+    NUM = 26

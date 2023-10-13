@@ -11,7 +11,7 @@ class Env:
     def get(self, tk):
         if tk in self.table:
             word = self.table[tk]
-            return Word(word.lexeme, word.getTag())
+            return Word(word[0], word[1])
         return None
 
     def print(self):
