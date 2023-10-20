@@ -6,26 +6,40 @@ def testeLexico(string):
 
     arq = string
     L = Lexico(arq)
-    token = Token()
+    token = L.getToken()
 
-    token.setTag(L.getToken().getTag())
+    #token.setTag(.getTag())
 
-    while token.getTag() != Tag.FIM:
+    partoken = Word(token.toString(), token.getTag())
 
-        print(f'TAG: {token.getTag()} LEXEMA: {token}')
+    while partoken.getTag() != Tag.FIM:
 
-        token.setTag(L.getToken().getTag())
-        #print(token.getTag())
-        #token.setTag(a_token.getTag())
-        #print(token.getTag())
+        if partoken.getTag() == Tag.ID:
+            print(f'ID: {partoken.toString()}')
+        elif partoken.getTag() == Tag.LIT:
+            print(f'Literal: {partoken.toString()}')
+        elif partoken.getTag() == Tag.NUM:
+            print(f'NUM: {partoken.toString()}')
+        else:
+            print(f'TAG: {partoken.getTag()} LEXEMA: {partoken.toString()}')
+
+        token = L.getToken()
+        partoken = Word(token.toString(), token.getTag())
+
+    print('\nImprimindo a Tabela de Simbolos')
+
+    for key, value in L.Env.table.items():
+        id = value[1]
+
+        if id == Tag.ID:
+            print(f'ID: {key}')
+        else:
+            print(f'{key} Tag: {id}')
 
 
 
-    print('Saiu')
 
-
-
-arq = "teste.txt"  # Substitua pelo caminho do seu arquivo de texto
+arq = "teste4.txt"  # Substitua pelo caminho do seu arquivo de texto
 
 testeLexico(arq)
 

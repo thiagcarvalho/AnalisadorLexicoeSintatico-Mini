@@ -1,7 +1,7 @@
 import TabelaHash
 from Token import Token, Num
 from Tag import Tag
-from Token import Words
+from Token import Words, Word
 from TabelaHash import Env
 import re
 
@@ -25,11 +25,12 @@ class Lexico:
         self.Env = TabelaHash.Env()
         self.arq = arq
         self.pos = 0
+        self.char = ''
 
         self.reserve(Words.If)
         self.reserve(Words.Else)
         self.reserve(Words.Prog)
-        #self.reserve(Word.Beg)
+        self.reserve(Words.Beg)
         self.reserve(Words.End)
         self.reserve(Words.While)
         self.reserve(Words.Do)
@@ -45,6 +46,10 @@ class Lexico:
         self.reserve(Words.false)
         self.reserve(Words.Read)
         self.reserve(Words.Write)
+        #self.reserve(Words.Atrib)
+        self.reserve(Words.Int)
+        #self.reserve(Words.Com)
+        #self.reserve(Words.Smc)
 
     def getToken(self):
 
@@ -52,21 +57,133 @@ class Lexico:
             with open(self.arq, 'r') as arquivo:
 
                 arquivo.seek(self.pos)
+
                 char = arquivo.read(1)
 
-                while char == ' ' or char == '\n':
-                    if char == '\n':
+                #print(f'Lendo o caractere {char}')
+                #Lê espaços vazios e qubra de linha
+
+                while char.isspace() or char == '\n' or char == '%':
+
+                    if char == '%':
                         arquivo.readline()
+                    """while char != '\n':
+                        char = arquivo.read(1)
+                        #print(char)"""
+
 
                     char = arquivo.read(1)
 
-                if char == '':
-                    #print('Fim do arquivo')
-                    fim = Token()
-                    fim.setTag(Tag.FIM)
+                if not char:
+                    # print('Fim do arquivo')
 
+                    fim = Word('FIM', Tag.FIM)
                     return fim
 
+                if char == ">":
+                    char = arquivo.read(1)
+
+                    if char == ">":
+
+                        char = arquivo.read(1)
+                        self.pos = arquivo.tell()
+
+                        if char == ">":
+                            return Words.Ggg
+
+                        return Words.Gg
+
+                    elif char == "=":
+                        self.pos = arquivo.tell()
+                        return Words.Ge
+
+                    self.pos = arquivo.tell() - 1
+                    return Words.Gt
+
+                if char == "<":
+
+                    char = arquivo.read(1)
+
+                    if char == "=":
+                        self.pos = arquivo.tell()
+                        return Words.Le
+                    elif char == ">":
+                        self.pos = arquivo.tell()
+                        return Words.Ne
+
+                    elif char == "<":
+                        char = arquivo.read(1)
+                        self.pos = arquivo.tell()
+
+                        if char == "<":
+                            return Words.Lll
+
+                        return Words.Ll
+
+                    self.pos = arquivo.tell()
+                    return Words.Lt
+
+                if char == ":":
+                    char = arquivo.read(1)
+                    if char == "=":
+                        self.pos = arquivo.tell()
+
+                        return Words.Atrib
+
+                    self.pos = arquivo.tell() - 1
+                    return Words.Clm
+
+                if char == ",":
+                    self.pos = arquivo.tell()
+                    return Words.Com
+
+                if char == ";":
+                    self.pos = arquivo.tell()
+                    return Words.Smc
+
+                if char == "(":
+                    self.pos = arquivo.tell()
+                    return Words.Opar
+
+                if char == ")":
+                    self.pos = arquivo.tell()
+                    return Words.Cpar
+
+                if char == "*":
+                    self.pos = arquivo.tell()
+                    return Words.Mlt
+
+                if char == "/":
+                    self.pos = arquivo.tell()
+                    return Words.Div
+
+                if char == "-":
+                    self.pos = arquivo.tell()
+                    return Words.Sub
+
+                if char == "+":
+                    self.pos = arquivo.tell()
+                    return Words.Add
+
+                if char == "?":
+                    self.pos = arquivo.tell()
+                    return Words.Qst
+
+
+                if char == '"':
+                    literal = char
+                    char = arquivo.read(1)
+
+                    while char != '"':
+                        literal += char
+                        char = arquivo.read(1)
+
+                    self.pos = arquivo.tell()
+
+                    literal += char
+                    teste = Word(literal, Tag.LIT)
+
+                    return teste
 
                 if self.eDigito(char):
                     numero = 0
@@ -75,10 +192,11 @@ class Lexico:
                         numero = 10*numero + int(char)
                         char = arquivo.read(1)
 
-                    digit = Num(numero)
-                    self.pos = arquivo.tell()
+                    #digit = Num(numero)
+                    numero = Word(str(numero), Tag.NUM)
+                    self.pos = arquivo.tell() - 1
 
-                    return digit
+                    return numero
 
                 if self.eLetra(char):
                     palava = ""
@@ -87,39 +205,30 @@ class Lexico:
 
                         palava += char
                         char = arquivo.read(1)
+                        #print(char)
+
+                    #print(f'Li "{palava}" e estou nesse caractere {char}')
+                    if char != "":
+                        self.pos = arquivo.tell() - 1
+                    else:
+                        self.pos = arquivo.tell()
 
                     teste = self.Env.get(palava)
-                    self.pos = arquivo.tell()
 
+                    if teste:
+                        return teste
+
+                    teste = Word(palava, Tag.ID)
+                    self.reserve(teste)
                     return teste
                     #print(teste.lexeme, teste.getTag())
 
-                """while True:
-                    # Lê um único caractere do arquivo
-                    caractere = arquivo.read(1)
-                    # Verifica se o fim do arquivo foi atingido
-
-                    #if not caractere:
-                        #print("Trem em branco")
-                        #break
-
-                    if caractere.isspace():
-                        # Se encontramos um espaço em branco, o token está completo
-
-                        #self.pos = arquivo.tell()
-
-                        print(f'Caractere: {token} e posição {self.pos}')
-
-                        #self.arq = arquivo.seek(arquivo.tell())
-                        break
-
-                        # Adiciona o caractere ao token
-                    token += caractere
-                    print(token)
-                    # Faça algo com o caractere"""
+                self.pos = arquivo.tell()
+                print(f"Erro léxico: O token não foi reconhecido: {char}")
+                Token = Word(char, -1)
+                return Token
 
 
-                # Faça algo com o conteúdo do arquivo
         except FileNotFoundError:
             print(f"O arquivo '{self.arq}' não foi encontrado.")
 
