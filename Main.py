@@ -39,7 +39,7 @@ def testeLexico(string):
 
 
 
-arq = "teste4.txt"  # Substitua pelo caminho do seu arquivo de texto
+arq = "teste5.txt"  # Substitua pelo caminho do seu arquivo de texto
 
 testeLexico(arq)
 
