@@ -62,7 +62,7 @@ class Word(Token):
 class Words():
     And = Word("and", Tag.AND)
     Or = Word("or", Tag.OR)
-    """Word.Eq = Word("=", Tag.EQ)"""
+    Eq = Word("=", Tag.EQ)
     Gt = Word(">", Tag.GT)
     Ge = Word(">=", Tag.GE)
     Gg = Word(">>>", Tag.GG)

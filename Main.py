@@ -1,6 +1,6 @@
 from Lexico import *
 from Token import Token
-
+from Sintatico import *
 
 def testeLexico(string):
 
@@ -37,11 +37,23 @@ def testeLexico(string):
             print(f'{key} Tag: {id}')
 
 
+def testeSintatico(string):
+
+    arq = string
+    S = Sintatico(arq)
+
+    if S.IniciaAnalise():
+        print('oi')
+    else:
+        print('fim')
 
 
-arq = "teste5.txt"  # Substitua pelo caminho do seu arquivo de texto
 
-testeLexico(arq)
+arq = "teste1.txt"  # Substitua pelo caminho do seu arquivo de texto
+
+#testeLexico(arq)
+testeSintatico(arq)
+
 
 
 

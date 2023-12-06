@@ -123,6 +123,10 @@ class Lexico:
                     self.pos = arquivo.tell()
                     return Words.Lt
 
+                if char == "=":
+                    self.pos = arquivo.tell()
+                    return Words.Eq
+
                 if char == ":":
                     char = arquivo.read(1)
                     if char == "=":
@@ -152,6 +156,10 @@ class Lexico:
                 if char == "*":
                     self.pos = arquivo.tell()
                     return Words.Mlt
+
+                if char == "?":
+                    self.pos = arquivo.tell()
+                    return Words.Qst
 
                 if char == "/":
                     self.pos = arquivo.tell()
