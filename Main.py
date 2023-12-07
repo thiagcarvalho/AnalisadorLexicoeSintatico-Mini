@@ -43,13 +43,13 @@ def testeSintatico(string):
     S = Sintatico(arq)
 
     if S.IniciaAnalise():
-        print('oi')
+        print("Analise Sintatica feita com sucesso!")
     else:
-        print('fim')
+        print("Falha na analisa sintática!")
 
 
 
-arq = "teste1.txt"  # Substitua pelo caminho do seu arquivo de texto
+arq = "teste9.txt"  # Substitua pelo caminho do seu arquivo de texto
 
 #testeLexico(arq)
 testeSintatico(arq)
