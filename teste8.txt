@@ -6,5 +6,5 @@ begin
     y := 20;
     z := x + y;
     write("A soma de x e y é: ");
-    write(z)
+    write(z);
 end

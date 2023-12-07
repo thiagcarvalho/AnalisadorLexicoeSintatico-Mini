@@ -37,16 +37,10 @@ class Sintatico:
                 break
 
             else:
-                print(f'Esperado a palavra "program", recebido {token.toString()}')
+                print(f'ERRO! Esperado a palavra "program", recebido {token.toString()}')
 
             token = self.nextToken()
 
-        if b:
-            print("Analise Sintatica feita com sucesso")
-        else:
-            print("Falha na analisa sintática")
-
-        print(b)
 
         return b
 
@@ -63,7 +57,7 @@ class Sintatico:
                 break
 
             else:
-                print(f'Esperado um "id", recebido {token.getTag()}')
+                print(f'ERRO! Esperado um "id", recebido {token.toString()}')
 
             token = self.nextToken()
 
@@ -88,7 +82,8 @@ class Sintatico:
                 return b
 
             else:
-                print(f'Esperado a palavra "declare" ou "begin", recebido {token.getTag()}')
+                b = False
+                print(f'ERRO! Esperado a palavra "declare" ou "begin", recebido {token.toString()}')
 
             token = self.nextToken()
 
@@ -119,7 +114,7 @@ class Sintatico:
 
             #decl -> *type ident-lst
             elif token.getTag() == Tag.TYPE:
-                self.AddToken(token)
+                #self.AddToken(token)
                 b = self.e4() and b
 
             # decl-list -> *decl decl-list'
@@ -128,7 +123,7 @@ class Sintatico:
 
             else:
                 b = False
-                print(f'Esperado "int", "decimal", recebido {token.getTag()}')
+                print(f'ERRO! Esperado "int", "decimal", recebido {token.toString()}')
 
             token = self.nextToken()
 
@@ -158,10 +153,10 @@ class Sintatico:
 
             else:
                 b = False
-                print(f'Esperado "identificador", recebido {token.getTag()}')
+                print(f'ERRO! Esperado "identificador", recebido {token.toString()}')
 
             token = self.nextToken()
-            print('estado 4')
+            #print('estado 4')
 
         return b
 
@@ -223,10 +218,9 @@ class Sintatico:
 
             else:
                 b = False
-                print(f'Esperado "identificador", recebido {token.getTag()}')
+                print(f'ERRO! Esperado "identificador", recebido {token.toString()}')
 
             token = self.nextToken()
-            print('estado 6')
 
         return b
 
@@ -245,7 +239,7 @@ class Sintatico:
 
             else:
                 b = False
-                print(f'Esperado ";" recebido {token.getTag()}')
+                print(f'ERRO! Esperado ";" recebido {token.toString()}')
 
             token = self.nextToken()
 
@@ -271,8 +265,7 @@ class Sintatico:
 
             elif token.getTag() == Tag.TYPE:
 
-                self.AddToken(token)
-
+                #self.AddToken(token)
                 b = self.e4() and b
 
             elif token.getTag() == Tag.DECL:
@@ -289,10 +282,10 @@ class Sintatico:
 
             else:
                 b = False
-                print(f'Esperado "int", "decimal", recebido {token.getTag()}')
+                print(f'ERRO! Esperado "int", "decimal", recebido {token.toString()}')
 
             token = self.nextToken()
-            print('estado 8')
+            #print('estado 8')
 
         return b
 
@@ -311,7 +304,7 @@ class Sintatico:
 
             else:
                 b = False
-                print(f'ERRO! Esperado "begin", recebido: {token.getTag()}')
+                print(f'ERRO! Esperado "begin", recebido: {token.toString()}')
 
             token = self.nextToken()
 
@@ -386,7 +379,7 @@ class Sintatico:
 
             else:
                 b = False
-                print(f'ERRO! Esperado "identifier", "if", "while", "read" ou "write", recebido: {token.getTag()}')
+                print(f'ERRO! Esperado "identifier", "if", "while", "read" ou "write", recebido: {token.toString()}')
 
             token = self.nextToken()
 
@@ -406,7 +399,7 @@ class Sintatico:
                 return b
             else:
                 b = False
-                print(f'ERRO! Esperado "(", recebido: {token.getTag()}')
+                print(f'ERRO! Esperado "(", recebido: {token.toString()}')
 
             token = self.nextToken()
 
@@ -427,7 +420,7 @@ class Sintatico:
                 return b
             else:
                 b = False
-                print(f'ERRO! Esperado "(", recebido: {token.getTag()}')
+                print(f'ERRO! Esperado "(", recebido: {token.toString()}')
 
             token = self.nextToken()
 
@@ -500,6 +493,12 @@ class Sintatico:
             elif token.getTag() == Tag.OPAR:
                 b = self.e45() and b
 
+            else:
+
+                b = False
+                print(f'ERRO! Esperado "LITERAL", "identificador", "numero", "(", "-" ou "not", recebido '
+                      f'{token.toString()}')
+
             token = self.nextToken()
 
         return b
@@ -522,7 +521,7 @@ class Sintatico:
 
             else:
                 b = False
-                print(f'ERRO! Esperado ")", recebido: {token.getTag()}')
+                print(f'ERRO! Esperado ")", recebido: {token.toString()}')
 
             token = self.nextToken()
 
@@ -544,14 +543,13 @@ class Sintatico:
 
             else:
                 b = False
-                print(f'ERRO! Esperado ")", recebido: {token.getTag()}')
+                print(f'ERRO! Esperado "identifier", recebido: {token.toString()}')
 
             token = self.nextToken()
-            print('estado 15')
 
         return b
 
-
+    # read-stmt -> read(identifier*)
     def e16(self):
 
         b = True
@@ -565,9 +563,11 @@ class Sintatico:
                 #aux = Token(Tag.READSTMT)
                 self.AddToken(aux)
                 return b
+            else:
+                b = False
+                print(f'ERRO! Esperado ")", recebido: {token.toString()}')
 
             token = self.nextToken()
-            print('estado 16')
 
         return b
 
@@ -581,15 +581,13 @@ class Sintatico:
         while token.getTag() != Tag.FIM:
 
             if token.getTag() == Tag.ATRIB:
-                print('indo pro estado 18')
                 b = self.e18() and b
                 return b
             else:
                 b = False
-                print(f'ERRO! Esperado ":=" recebido, {token.getTag()}')
+                print(f'ERRO! Esperado ":=" recebido, {token.toString()}')
 
             token = self.nextToken()
-            print('estado 17')
 
         return b
 
@@ -616,11 +614,7 @@ class Sintatico:
             # simple_Expr -> (*simple_Expr) ? simple_Expr : simple_Expr
             # factor -> *(expression)
             elif token.getTag() == Tag.OPAR:
-
                 b = self.e45() and b
-
-                for token2 in self.pilha_token:
-                    print(f'Dahora a vida {token2.getTag()}')
 
 
             #term -> *factor_a
@@ -654,17 +648,12 @@ class Sintatico:
                 #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
 
-            ##factor -> *(expression)
-            #elif token.getTag() == Tag.OPAR:
-
-                #b = self.e24() and b
-
             else:
                 b = False
-                print(f'ERRO! Esperado "(", "-", "not", "identificadoe" ou "numero", recebido {token.getTag()}')
+                print(f'ERRO! Esperado "(", "-", "not", "identificadoe" ou "numero", recebido {token.toString()}')
 
             token = self.nextToken()
-            print('estado 18')
+            #print('estado 18')
 
 
         return  b
@@ -679,16 +668,15 @@ class Sintatico:
         while token.getTag() != Tag.FIM:
 
             if token.getTag() == Tag.SMC:
-                print('indo pro estado 20')
                 b = self.e20() and b
                 return b
 
             else:
                 b = False
-                print(f'Esperado ";" recebido {token.getTag()}')
+                print(f'ERRO! Esperado ";" recebido {token.toString()}')
 
             token = self.nextToken()
-            print('estado 19')
+            #print('estado 19')
 
         return b
 
@@ -708,7 +696,7 @@ class Sintatico:
 
             # stmt -> *assign-stmt
             elif token.getTag() == Tag.ASSIGNSTMT:
-                print(f'o valor do b é {b}')
+                #print(f'o valor do b é {b}')
                 aux = Word('STMT', Tag.STMT)
                 #aux = Token(Tag.STMT)
                 self.AddToken(aux)
@@ -806,7 +794,7 @@ class Sintatico:
 
             else:
                 b = False
-                print(f'ERRO! Esperado "id", "numero" ou "(", recebido: {token.getTag()}')
+                print(f'ERRO! Esperado "id", "numero" ou "(", recebido: {token.toString()}')
 
             token = self.nextToken()
 
@@ -833,7 +821,6 @@ class Sintatico:
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.DIV:
-                print('divvvvvvvvvvv')
                 aux = Word('MULOP', Tag.MULOP)
                 #aux = Token(Tag.MULOP)
                 self.AddToken(aux)
@@ -845,24 +832,23 @@ class Sintatico:
 
             elif token.getTag() == Tag.MOD:
                 aux = Word('MULOP', Tag.MULOP)
+                aux = Word('MULOP', Tag.MULOP)
                 #aux = Token(Tag.MULOP)
                 self.AddToken(aux)
 
             # simple_Exprt -> term*
             else:
 
-
                 aux = Word('simple_Expr', Tag.SIMPLEEXPRESSION)
                 #aux = Token(Tag.SIMPLEEXPRESSION)
                 self.AddToken(token)
                 self.AddToken(aux)
 
-
                 return b
 
 
             token = self.nextToken()
-            print('estado 22')
+            #print('estado 22')
 
         return b
 
@@ -916,10 +902,10 @@ class Sintatico:
             else:
 
                 b = False
-                print(f'ERRO! Esperado "id", "numero" ou "(", recebido: {token.getTag()}')
+                print(f'ERRO! Esperado "id", "numero" ou "(", "not" ou "-", recebido: {token.toString()}')
 
             token = self.nextToken()
-            print('estado 23')
+            #print('estado 23')
 
         return b
 
@@ -984,9 +970,14 @@ class Sintatico:
                 #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
 
+            else:
+
+                b = False
+                print(f'ERRO! Esperado "identifier", "numero", "(", "not" ou "-", recebido: {token.toString()}, '
+                      f'{token.getTag()}')
 
             token = self.nextToken()
-            print('estado 24')
+            #print('estado 24')
 
 
         return b
@@ -1009,7 +1000,6 @@ class Sintatico:
 
             # simple_Expr -> simple_Expr addop* term
             elif token.getTag() == Tag.ADDOP:
-                print('vai somando')
                 b = self.e28() and b
                 return b
 
@@ -1067,7 +1057,7 @@ class Sintatico:
                 return b
 
             token = self.nextToken()
-            print('estado 24')
+            #print('estado 24')
 
         return b
 
@@ -1081,7 +1071,7 @@ class Sintatico:
         while token.getTag() != Tag.FIM:
 
             # expression -> simple_Expr relop *simple_Expr
-            # simple_Exprt -> *simple_Expr *addop simple_Expr
+            # simple_Expr -> *simple_Expr *addop simple_Expr
             if token.getTag() == Tag.SIMPLEEXPRESSION:
                 b = self.e29() and b
                 return b
@@ -1091,19 +1081,21 @@ class Sintatico:
             elif token.getTag() == Tag.TERM:
                 b = self.e22() and b
 
-            # simple_Expr -> ? simple_Expr : simple_Expr
+            # simple_Expr -> (simple_Expr) ? simple_Expr : simple_Expr
             # factor -> *(expression)
             elif token.getTag() == Tag.OPAR:
                 b = self.e45() and b
 
             # term -> *factor_a
             elif token.getTag() == Tag.FACTORA:
-                aux = Token(Tag.TERM)
+                aux = Word('TERM', Tag.TERM)
+                #aux = Token(Tag.TERM)
                 self.AddToken(aux)
 
             # factor_a -> *factor
             elif token.getTag() == Tag.FACTOR:
-                aux = Token(Tag.FACTORA)
+                aux = Word('FACTOR-A', Tag.FACTORA)
+                #aux = Token(Tag.FACTORA)
                 self.AddToken(aux)
 
             # factor_a -> *not factor
@@ -1115,14 +1107,20 @@ class Sintatico:
                 b = self.e31() and b
 
             elif token.getTag() == Tag.ID:
-                aux = Token(Tag.FACTOR)
+                aux = Word('FACTOR', Tag.FACTOR)
+                #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
 
             # factor -> *constant
             elif token.getTag() == Tag.NUM:
-                aux = Token(Tag.FACTOR)
+                aux = Word('FACTOR', Tag.FACTOR)
+                #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
 
+            else:
+
+                b = False
+                print(f'ERRO! Esperado "id", "numero" ou "(", "not" ou "-", recebido: {token.toString()}')
 
             token = self.nextToken()
 
@@ -1138,16 +1136,19 @@ class Sintatico:
         while token.getTag() != Tag.FIM:
 
             if token.getTag() == Tag.CPAR:
-                print('fechei um factor')
-                aux = Token(Tag.FACTOR)
+
+                aux = Word('FACTOR', Tag.FACTOR)
+                #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
 
                 return b
 
-            b = False
-            print(f'Esperado ")" recebido, {token.getTag()}')
+            else:
+                b = False
+                print(f'ERRO! Esperado ")" recebido, {token.toString()}')
+
             token = self.nextToken()
-            print('estado 27')
+            #print('estado 27')
 
         return b
 
@@ -1165,9 +1166,6 @@ class Sintatico:
             if token.getTag() == Tag.TERM:
                 b = self.e30() and b
 
-                for token2 in self.pilha_token:
-                    print(f'Token é: {token2.getTag()}')
-
                 return b
 
             #factor -> *(expression)
@@ -1176,14 +1174,14 @@ class Sintatico:
 
             #term -> *factor_a
             elif  token.getTag() == Tag.FACTORA:
-                print('ta rolando3')
-                aux = Token(Tag.TERM)
+                aux = Word('TERM', Tag.TERM)
+                #aux = Token(Tag.TERM)
                 self.AddToken(aux)
 
             #factor_a -> *factor
             elif token.getTag() == Tag.FACTOR:
-                print('ta rolando2')
-                aux = Token(Tag.FACTORA)
+                aux = Word('FACTOR-A', Tag.FACTORA)
+                #aux = Token(Tag.FACTORA)
                 self.AddToken(aux)
 
             # factor_a -> *not factor
@@ -1195,22 +1193,23 @@ class Sintatico:
                 b = self.e31() and b
 
             elif token.getTag() == Tag.ID:
-                aux = Token(Tag.FACTOR)
+                aux = Word('FACTOR', Tag.FACTOR)
+                #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
 
             #factor -> *constant
             elif token.getTag() == Tag.NUM:
-                print('ta rolando')
-                aux = Token(Tag.FACTOR)
+                aux = Word('FACTOR', Tag.FACTOR)
+                #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
 
             # assign-stmt -> *identifier := simple_Expr
             elif token.getTag() == Tag.ID:
                 b = self.e17() and b
 
-            elif token.getTag() == Tag.OPAR:
-                b = self.e24() and b
-
+            else:
+                b = False
+                print(f'ERRO! Esperado "id", "numero" ou "(", "not" ou "-", recebido: {token.toString()}')
 
             token = self.nextToken()
             #print('estado 28')
@@ -1233,25 +1232,26 @@ class Sintatico:
                 return b
 
             elif token.getTag() == Tag.ADD:
-                aux = Token(Tag.ADDOP)
+                aux = Word('ADDOP', Tag.ADDOP)
+                #aux = Token(Tag.ADDOP)
                 self.AddToken(aux)
 
-
             elif token.getTag() == Tag.SUB:
-
+                aux = Word('ADDOP', Tag.ADDOP)
                 aux = Token(Tag.ADDOP)
                 self.AddToken(aux)
 
 
             elif token.getTag() == Tag.OR:
-
+                aux = Word('ADDOP', Tag.ADDOP)
                 aux = Token(Tag.ADDOP)
                 self.AddToken(aux)
 
 
             else:
 
-                aux = Token(Tag.EXPRESSION)
+                aux = Word('EXPRESSION', Tag.EXPRESSION)
+                #aux = Token(Tag.EXPRESSION)
                 self.AddToken(token)
                 self.AddToken(aux)
 
@@ -1259,7 +1259,7 @@ class Sintatico:
 
             token = self.nextToken()
 
-            print('estado 24')
+            #print('estado 24')
 
         return b
 
@@ -1279,24 +1279,29 @@ class Sintatico:
                 return b
 
             elif token.getTag() == Tag.MLT:
-                aux = Token(Tag.MULOP)
+                aux = Word('MULOP', Tag.MULOP)
+                #aux = Token(Tag.MULOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.DIV:
-                aux = Token(Tag.MULOP)
+                aux = Word('MULOP', Tag.MULOP)
+                #aux = Token(Tag.MULOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.AND:
-                aux = Token(Tag.MULOP)
+                aux = Word('MULOP', Tag.MULOP)
+                #aux = Token(Tag.MULOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.MOD:
-                aux = Token(Tag.MULOP)
+                aux = Word('MULOP', Tag.MULOP)
+                #aux = Token(Tag.MULOP)
                 self.AddToken(aux)
 
             # simple_Expr -> simple_Expr addop term*
             else:
 
+                aux = Word('simple_Expr', Tag.SIMPLEEXPRESSION)
                 aux = Token(Tag.SIMPLEEXPRESSION)
                 self.AddToken(token)
                 self.AddToken(aux)
@@ -1304,7 +1309,7 @@ class Sintatico:
                 return b
 
             token = self.nextToken()
-            print('estado 30')
+            #print('estado 30')
 
         return b
 
@@ -1319,18 +1324,21 @@ class Sintatico:
 
             # factor_a -> - *factor
             if token.getTag() == Tag.FACTOR:
-                aux = Token(Tag.FACTORA)
+                aux = Word('FACTOR-A', Tag.FACTORA)
+                #aux = Token(Tag.FACTORA)
                 self.AddToken(aux)
                 return b
 
             # factor -> *identifier
             elif token.getTag() == Tag.ID:
-                aux = Token(Tag.FACTOR)
+                aux = Word('FACTOR', Tag.FACTOR)
+                #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
 
             # factor -> *constant
             elif token.getTag() == Tag.NUM:
-                aux = Token(Tag.FACTOR)
+                aux = Word('FACTOR', Tag.FACTOR)
+                #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
 
             # factor -> *(expression)
@@ -1339,7 +1347,7 @@ class Sintatico:
 
             else:
                 b = False
-                print(f'ERRO! Esperado "id"/"numero"/"(", recebido: {token.getTag()}')
+                print(f'ERRO! Esperado "id", "numero" ou "(", recebido: {token.toString()}')
 
             token = self.nextToken()
 
@@ -1356,13 +1364,14 @@ class Sintatico:
         while token.getTag() != Tag.FIM:
 
             if token.getTag() == Tag.END:
-                aux = Token(Tag.BODY)
+                aux = Word('BODY', Tag.BODY)
+                #aux = Token(Tag.BODY)
                 self.AddToken(aux)
                 return b
 
             else:
                 b = False
-                print(f'ERRO! Esperado "end", recebido: {token.getTag()}')
+                print(f'ERRO! Esperado "end", recebido: {token.toString()}')
 
 
             token = self.nextToken()
@@ -1377,12 +1386,13 @@ class Sintatico:
         token = self.nextToken()
 
         if token.getTag() == Tag.FIM:
-            aux = Token(Tag.S)
+            aux = Word('S', Tag.S)
+            #aux = Token(Tag.S)
             self.AddToken(aux)
 
         else:
             b = False
-            print(f'ERRO! Esperado "fim de arquivo", recebido: {token.getTag()}')
+            print(f'ERRO! Esperado "fim de arquivo", recebido: {token.toString()}')
 
         return b
 
@@ -1399,26 +1409,28 @@ class Sintatico:
             # simple_Expr -> simple_Expr *addop term
             if token.getTag() == Tag.ADDOP:
                 b = self.e28() and b
-
+                return b
 
             elif token.getTag() == Tag.ADD:
-                aux = Token(Tag.ADDOP)
+                aux = Word('ADDOP', Tag.ADDOP)
+                #aux = Token(Tag.ADDOP)
                 self.AddToken(aux)
 
 
             elif token.getTag() == Tag.SUB:
-                aux = Token(Tag.ADDOP)
+                aux = Word('ADDOP', Tag.ADDOP)
+                #aux = Token(Tag.ADDOP)
                 self.AddToken(aux)
 
 
             elif token.getTag() == Tag.OR:
-                aux = Token(Tag.ADDOP)
+                aux = Word('ADDOP', Tag.ADDOP)
+                #aux = Token(Tag.ADDOP)
                 self.AddToken(aux)
 
-
             else:
-
-                aux = Token(Tag.WRITEABLE)
+                aux = Word('WRITEABLE', Tag.WRITEABLE)
+                #aux = Token(Tag.WRITEABLE)
                 self.AddToken(token)
                 self.AddToken(aux)
 
@@ -1448,27 +1460,42 @@ class Sintatico:
 
             # stmt -> assign-stmt
             elif token.getTag() == Tag.ASSIGNSTMT:
-                aux = Token(Tag.STMT)
+                aux = Word('STMT', Tag.STMT)
+                #aux = Token(Tag.STMT)
+                self.AddToken(aux)
+
+            # stmt -> if-stmt
+            elif token.getTag() == Tag.IFSTMT:
+                aux = Word('STMT', Tag.STMT)
+                # aux = Token(Tag.STMT)
                 self.AddToken(aux)
 
             # stmt -> *do-while-stmt
             elif token.getTag() == Tag.DOWHILESTMT:
-                aux = Token(Tag.STMT)
+                aux = Word('STMT', Tag.STMT)
+                #aux = Token(Tag.STMT)
                 self.AddToken(aux)
 
             # stmt -> *readstmt
             elif token.getTag() == Tag.READSTMT:
-                aux = Token(Tag.STMT)
+                aux = Word('STMT', Tag.STMT)
+                #aux = Token(Tag.STMT)
                 self.AddToken(aux)
 
             # stmt => write-stmt
             elif token.getTag() == Tag.WRITESTMT:
-                aux = Token(Tag.STMT)
+                aux = Word('STMT', Tag.STMT)
+                #aux = Token(Tag.STMT)
                 self.AddToken(aux)
 
             # assign-stmt -> *identifier := simple_Expr
             elif token.getTag() == Tag.ID:
                 self.e17()
+
+            # if-stmt -> *if condition then stmt-list end
+            # if-stmt -> *if condition then stmt-list else stm-list end
+            elif token.getTag() == Tag.IF:
+                b = self.e39() and b
 
             #do-while -> *do stmt-list stmt-suffix
             elif token.getTag() == Tag.DO:
@@ -1476,20 +1503,15 @@ class Sintatico:
 
             # read-stmt -> *read(identifier)
             elif token.getTag() == Tag.READ:
-                print('read')
                 b = self.e11() and b
 
             # write-stmt -> *write(writable)
             elif token.getTag() == Tag.WRITE:
                 b = self.e12() and b
 
-            # write-stmt -> *write(writable)
-            """
-
-            # if-stmt -> *if condition then stmt-list end
-            # if-stmt -> *if condition then stmt-list else stm-list end
-            elif token.getTag() == Tag.IF:
-                b = self.e14()"""
+            else:
+                b = False
+                print(f'ERRO! Esperado "identifier", "if" ou "while", "read" ou "write", recebido: {token.toString()}')
 
             token = self.nextToken()
 
@@ -1506,7 +1528,8 @@ class Sintatico:
 
             #do-while-stmt -> do stmt-list *stmt-suffix
             if token.getTag() == Tag.STMTSUFFIX:
-                aux = Token(Tag.DOWHILESTMT)
+                aux = Word('DOWHILESTMT', Tag.DOWHILESTMT)
+                #aux = Token(Tag.DOWHILESTMT)
                 self.AddToken(aux)
                 return b
 
@@ -1516,7 +1539,7 @@ class Sintatico:
 
             else:
                 b = False
-                print(f'Esperado "while" recebido {token.getTag()}')
+                print(f'ERRO! Esperado "while" recebido {token.toString()}')
 
             token = self.nextToken()
 
@@ -1533,13 +1556,15 @@ class Sintatico:
         while token.getTag() != Tag.FIM:
 
             if token.getTag() == Tag.CONDITION:
-                aux = Token(Tag.STMTSUFFIX)
+                aux = Word('STMTSUFFIX', Tag.STMTSUFFIX)
+                #aux = Token(Tag.STMTSUFFIX)
                 self.AddToken(aux)
                 return b
 
             #codition -> *expression
             elif token.getTag() == Tag.EXPRESSION:
-                aux = Token(Tag.CONDITION)
+                aux = Word('CONDITION', Tag.CONDITION)
+                #aux = Token(Tag.CONDITION)
                 self.AddToken(aux)
 
             # expression -> *simple_Expr
@@ -1554,9 +1579,10 @@ class Sintatico:
             elif token.getTag() == Tag.TERM:
                 b = self.e22() and b
 
+            # simple_Expr -> *(simple_Expr) ? simple_Expr : simple_Expr
             # factor -> *(expression)
             elif token.getTag() == Tag.OPAR:
-                b = self.e24() and b
+                b = self.e45() and b
 
             # term -> *factor_a
             elif token.getTag() == Tag.FACTORA:
@@ -1577,14 +1603,19 @@ class Sintatico:
                 b = self.e31() and b
 
             elif token.getTag() == Tag.ID:
-                aux = Token(Tag.FACTOR)
+                aux = Word('FACTOR', Tag.FACTOR)
+                #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
 
             # factor -> *constant
             elif token.getTag() == Tag.NUM:
-                aux = Token(Tag.FACTOR)
+                aux = Word('FACTOR', Tag.FACTOR)
+                #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
 
+            else:
+                b = False
+                print(f'ERRO! Esperado "identifier", "numero" ou "(", "not" ou "-", recebido: {token.toString()}')
 
             token = self.nextToken()
 
@@ -1603,30 +1634,33 @@ class Sintatico:
 
             # simple_Expr -> simple_Expr addop* term
             if token.getTag() == Tag.ADDOP:
-                print('peguei o menos')
                 b = self.e28() and b
+
                 token = self.nextToken()
-                aux = Token(Tag.ASSIGNSTMT)
+                aux = Word('ASSIGNSTMT', Tag.ASSIGNSTMT)
+                #aux = Token(Tag.ASSIGNSTMT)
                 self.AddToken(aux)
 
                 return b
 
             elif token.getTag() == Tag.ADD:
-                aux = Token(Tag.ADDOP)
+                aux = Word('ADDOP', Tag.ADDOP)
+                #aux = Token(Tag.ADDOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.SUB:
-                print('subtração')
-                aux = Token(Tag.ADDOP)
+                aux = Word('ADDOP', Tag.ADDOP)
+                #aux = Token(Tag.ADDOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.OR:
-                aux = Token(Tag.ADDOP)
+                aux = Word('ADDOP', Tag.ADDOP)
+                #aux = Token(Tag.ADDOP)
                 self.AddToken(aux)
 
             else:
-
-                aux = Token(Tag.ASSIGNSTMT)
+                aux = Word('ASSIGNSTMT', Tag.ASSIGNSTMT)
+                #aux = Token(Tag.ASSIGNSTMT)
                 self.AddToken(token)
                 self.AddToken(aux)
 
@@ -1652,7 +1686,8 @@ class Sintatico:
 
             #codition -> *expression
             elif token.getTag() == Tag.EXPRESSION:
-                aux = Token(Tag.CONDITION)
+                aux = Word('CONDITION', Tag.CONDITION)
+                #aux = Token(Tag.CONDITION)
                 self.AddToken(aux)
 
             # expression -> *simple_Expr
@@ -1667,17 +1702,20 @@ class Sintatico:
                 b = self.e22() and b
 
             # factor -> *(expression)
+            # simple_Expr -> *(simple_Expr) ? simple_Expr : simple_Expr
             elif token.getTag() == Tag.OPAR:
-                b = self.e24() and b
+                b = self.e45() and b
 
             # term -> *factor_a
             elif token.getTag() == Tag.FACTORA:
-                aux = Token(Tag.TERM)
+                aux = Word('TERM', Tag.TERM)
+                #aux = Token(Tag.TERM)
                 self.AddToken(aux)
 
             # factor_a -> *factor
             elif token.getTag() == Tag.FACTOR:
-                aux = Token(Tag.FACTORA)
+                aux = Word('FACTOR-A', Tag.FACTORA)
+                #aux = Token(Tag.FACTORA)
                 self.AddToken(aux)
 
             # factor_a -> *not factor
@@ -1688,15 +1726,21 @@ class Sintatico:
             elif token.getTag() == Tag.SUB:
                 b = self.e31() and b
 
+            # factor_a -> identifier
             elif token.getTag() == Tag.ID:
-                aux = Token(Tag.FACTOR)
+                aux = Word('FACTOR', Tag.FACTOR)
+                # aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
 
             # factor -> *constant
             elif token.getTag() == Tag.NUM:
-                aux = Token(Tag.FACTOR)
+                aux = Word('FACTOR', Tag.FACTOR)
+                #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
 
+            else:
+                b = False
+                print(f'ERRO! Esperado "identifier", "numero" ou "(", "not" ou "-", recebido: {token.toString()}')
 
             token = self.nextToken()
 
@@ -1720,11 +1764,11 @@ class Sintatico:
             else:
 
                 b = False
-                print(f'Erro! Esperado "then" recebido {token.getTag()}')
+                print(f'ERRO! Esperado "then" recebido {token.toString()}')
 
             token = self.nextToken()
 
-            print('estado 40')
+            #print('estado 40')
 
         return b
 
@@ -1748,27 +1792,32 @@ class Sintatico:
 
             #stmt -> assign-stmt
             elif token.getTag() == Tag.ASSIGNSTMT:
-                aux = Token(Tag.STMT)
+                aux = Word('STMT', Tag.STMT)
+                #aux = Token(Tag.STMT)
                 self.AddToken(aux)
 
             # stmt -> if-stmt
             elif token.getTag() == Tag.IFSTMT:
-                aux = Token(Tag.STMT)
+                aux = Word('STMT', Tag.STMT)
+                #aux = Token(Tag.STMT)
                 self.AddToken(aux)
 
             # stmt -> do-while-stmt
             elif token.getTag() == Tag.DOWHILESTMT:
-                aux = Token(Tag.STMT)
+                aux = Word('STMT', Tag.STMT)
+                #aux = Token(Tag.STMT)
                 self.AddToken(aux)
 
             # stmt -> *readstmt
             elif token.getTag() == Tag.READSTMT:
-                aux = Token(Tag.STMT)
+                aux = Word('STMT', Tag.STMT)
+                #aux = Token(Tag.STMT)
                 self.AddToken(aux)
 
             # stmt => write-stmt
             elif token.getTag() == Tag.WRITESTMT:
-                aux = Token(Tag.STMT)
+                aux = Word('STMT', Tag.STMT)
+                #aux = Token(Tag.STMT)
                 self.AddToken(aux)
 
             # assign-stmt -> *identifier := simple_Expr
@@ -1792,6 +1841,10 @@ class Sintatico:
             elif token.getTag() == Tag.WRITE:
                 b = self.e12() and b
 
+            else:
+                b = False
+                print(f'ERRO! Esperado "identifier", "if" ou "while", "read" ou "write", recebido: {token.toString()}')
+
             token = self.nextToken()
 
         return  b
@@ -1808,7 +1861,8 @@ class Sintatico:
 
             # if-stmt -> *if condition then stmt-list* end
             if token.getTag() == Tag.END:
-                aux = Token(Tag.IFSTMT)
+                aux = Word('IFSTMT', Tag.IFSTMT)
+                #aux = Token(Tag.IFSTMT)
                 self.AddToken(aux)
                 return b
 
@@ -1820,11 +1874,11 @@ class Sintatico:
             else:
 
                 b = False
-                print(f'Erro! Esperado "end" ou "else", recebido {token.getTag()}')
+                print(f'Erro! Esperado "end" ou "else", recebido {token.toString()}')
 
             token = self.nextToken()
 
-            print('estado 42')
+            #print('estado 42')
 
         return b
 
@@ -1847,32 +1901,37 @@ class Sintatico:
 
             #stmt -> assign-stmt
             elif token.getTag() == Tag.ASSIGNSTMT:
-                aux = Token(Tag.STMT)
+                aux = Word('STMT', Tag.STMT)
+                #aux = Token(Tag.STMT)
                 self.AddToken(aux)
 
             #stmt -> if-stmt
             elif token.getTag() == Tag.IFSTMT:
-                aux = Token(Tag.STMT)
+                aux = Word('STMT', Tag.STMT)
+                #aux = Token(Tag.STMT)
                 self.AddToken(aux)
 
             #stmt -> do-while-stmt
             elif token.getTag() == Tag.DOWHILESTMT:
-                aux = Token(Tag.STMT)
+                aux = Word('STMT', Tag.STMT)
+                #aux = Token(Tag.STMT)
                 self.AddToken(aux)
 
             # stmt -> *readstmt
             elif token.getTag() == Tag.READSTMT:
-                aux = Token(Tag.STMT)
+                aux = Word('STMT', Tag.STMT)
+                #aux = Token(Tag.STMT)
                 self.AddToken(aux)
 
             # stmt => write-stmt
             elif token.getTag() == Tag.WRITESTMT:
-                aux = Token(Tag.STMT)
+                aux = Word('STMT', Tag.STMT)
+                #aux = Token(Tag.STMT)
                 self.AddToken(aux)
 
             # assign-stmt -> *identifier := simple_Expr
             elif token.getTag() == Tag.ID:
-                self.e17()
+                b = self.e17() and b
 
             # if-stmt -> *if condition then stmt-list end
             # if-stmt -> *if condition then stmt-list else stm-list end
@@ -1891,6 +1950,10 @@ class Sintatico:
             elif token.getTag() == Tag.WRITE:
                 b = self.e12() and b
 
+            else:
+                b = False
+                print(f'ERRO! Esperado "identifier", "if" ou "while", "read" ou "write", recebido: {token.toString()}')
+
             token = self.nextToken()
 
         return  b
@@ -1906,18 +1969,19 @@ class Sintatico:
 
             # if-stmt -> *if condition then stmt-list else stmt-list end*
             if token.getTag() == Tag.END:
-                aux = Token(Tag.IFSTMT)
+                aux = Word('IFSTMT', Tag.IFSTMT)
+                #aux = Token(Tag.IFSTMT)
                 self.AddToken(aux)
                 return b
 
             else:
 
                 b = False
-                print(f'Erro! Esperado "end" ou "else", recebido {token.getTag()}')
+                print(f'Erro! Esperado "end", recebido {token.toString()}')
 
             token = self.nextToken()
 
-            print('estado 44')
+            #print('estado 44')
 
         return b
 
@@ -1932,6 +1996,18 @@ class Sintatico:
         while token.getTag() != Tag.FIM:
 
             if token.getTag() == Tag.EXPRESSION:
+
+                follow = self.nextToken()
+
+                if follow.getTag() == Tag.SMC:
+
+                    aux = Word('SIMPLEEXPRESSION', Tag.SIMPLEEXPRESSION)
+                    self.AddToken(follow)
+                    self.AddToken(aux)
+
+                    return b
+
+                self.AddToken(follow)
                 b = self.e27() and b
                 return b
 
@@ -1954,12 +2030,14 @@ class Sintatico:
 
             # term -> *factor_a
             elif token.getTag() == Tag.FACTORA:
-                aux = Token(Tag.TERM)
+                aux = Word('TERM', Tag.TERM)
+                #aux = Token(Tag.TERM)
                 self.AddToken(aux)
 
             # factor_a -> *factor
             elif token.getTag() == Tag.FACTOR:
-                aux = Token(Tag.FACTORA)
+                aux = Word('FACTOR-A', Tag.FACTORA)
+                #aux = Token(Tag.FACTORA)
                 self.AddToken(aux)
 
             # factor_a -> *not factor
@@ -1971,17 +2049,22 @@ class Sintatico:
                 b = self.e31() and b
 
             elif token.getTag() == Tag.ID:
-
-                aux = Token(Tag.FACTOR)
+                aux = Word('FACTOR', Tag.FACTOR)
+                #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
 
             # factor -> *constant
             elif token.getTag() == Tag.NUM:
-                aux = Token(Tag.FACTOR)
+                aux = Word('FACTOR', Tag.FACTOR)
+                #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
 
+            else:
+                b = False
+                print(f'ERRO! Esperado "identifier", "numero" ou "(", "not" ou "-", recebido: {token.toString()}')
+
             token = self.nextToken()
-            print('estado 45')
+            #print('estado 45')
 
         return b
 
@@ -2005,7 +2088,22 @@ class Sintatico:
 
             # simple_Expr -> (simple_Expr*) ? simple_Expr : simple_Expr
             elif token.getTag() == Tag.CPAR:
+
+                follow = self.nextToken()
+
+                if follow.getTag() != Tag.QST:
+
+                    self.AddToken(follow)
+                    self.AddToken(token)
+
+                    aux = Word('EXPRESSION', Tag.EXPRESSION)
+                    self.AddToken(aux)
+
+                    return b
+
+                self.AddToken(follow)
                 b = self.e47() and b
+
                 return b
 
             # simple_Expr -> simple_Expr addop* term
@@ -2014,44 +2112,53 @@ class Sintatico:
                 return b
 
             elif token.getTag() == Tag.EQ:
-                aux = Token(Tag.RELOP)
+                aux = Word('RELOP', Tag.RELOP)
+                #aux = Token(Tag.RELOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.GT:
-                aux = Token(Tag.RELOP)
+                aux = Word('RELOP', Tag.RELOP)
+                #aux = Token(Tag.RELOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.GE:
-                aux = Token(Tag.RELOP)
+                aux = Word('RELOP', Tag.RELOP)
+                #aux = Token(Tag.RELOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.LT:
-                aux = Token(Tag.RELOP)
+                aux = Word('RELOP', Tag.RELOP)
+                #aux = Token(Tag.RELOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.LE:
-                aux = Token(Tag.RELOP)
+                aux = Word('RELOP', Tag.RELOP)
+                #aux = Token(Tag.RELOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.NE:
-                aux = Token(Tag.RELOP)
+                aux = Word('RELOP', Tag.RELOP)
+                #aux = Token(Tag.RELOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.ADD:
-                aux = Token(Tag.ADDOP)
+                aux = Word('ADDOP', Tag.ADDOP)
+                #aux = Token(Tag.ADDOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.SUB:
-                aux = Token(Tag.ADDOP)
+                aux = Word('ADDOP', Tag.ADDOP)
+                #aux = Token(Tag.ADDOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.OR:
-                aux = Token(Tag.ADDOP)
+                aux = Word('ADDOP', Tag.ADDOP)
+                #aux = Token(Tag.ADDOP)
                 self.AddToken(aux)
 
             else:
-
-                aux = Token(Tag.EXPRESSION)
+                aux = Word('EXPRESSION', Tag.EXPRESSION)
+                #aux = Token(Tag.EXPRESSION)
                 self.AddToken(token)
                 self.AddToken(aux)
 
@@ -2073,6 +2180,9 @@ class Sintatico:
             if token.getTag() == Tag.QST:
                 b = self.e48() and b
                 return b
+            else:
+                b = False
+                print(f'ERRO! Esperado "?", recebido: {token.toString()}')
 
             token = self.nextToken()
 
@@ -2093,7 +2203,7 @@ class Sintatico:
             # simple_Exprt -> *simple_Expr addop term
             if token.getTag() == Tag.SIMPLEEXPRESSION:
                 b = self.e49() and b
-                break
+                return b
 
             # simple_Expr -> *term
             # term -> *term mulop factor_a
@@ -2107,12 +2217,14 @@ class Sintatico:
 
             # term -> *factor_a
             elif token.getTag() == Tag.FACTORA:
-                aux = Token(Tag.TERM)
+                aux = Word('TERM', Tag.TERM)
+                #aux = Token(Tag.TERM)
                 self.AddToken(aux)
 
             # factor_a -> *factor
             elif token.getTag() == Tag.FACTOR:
-                aux = Token(Tag.FACTORA)
+                aux = Word('FACTOR-A', Tag.FACTORA)
+                #aux = Token(Tag.FACTORA)
                 self.AddToken(aux)
 
             # factor_a -> *not factor
@@ -2124,16 +2236,22 @@ class Sintatico:
                 b = self.e31() and b
 
             elif token.getTag() == Tag.ID:
-
-                aux = Token(Tag.FACTOR)
+                aux = Word('FACTOR', Tag.FACTOR)
+                #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
 
             # factor -> *constant
             elif token.getTag() == Tag.NUM:
-                aux = Token(Tag.FACTOR)
+                aux = Word('FACTOR', Tag.FACTOR)
+                #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
 
+            else:
+                b = False
+                print(f'ERRO! Esperado "id", "numero" ou "(", "not" ou "-", recebido: {token.toString()}')
+
             token = self.nextToken()
+            #print('estado 48')
 
         return b
 
@@ -2158,24 +2276,29 @@ class Sintatico:
                 return b
 
             elif token.getTag() == Tag.ADD:
-                aux = Token(Tag.ADDOP)
+                aux = Word('ADDOP', Tag.ADDOP)
+                #aux = Token(Tag.ADDOP)
                 self.AddToken(aux)
 
 
             elif token.getTag() == Tag.SUB:
-
-                aux = Token(Tag.ADDOP)
+                aux = Word('ADDOP', Tag.ADDOP)
+                #aux = Token(Tag.ADDOP)
                 self.AddToken(aux)
 
 
             elif token.getTag() == Tag.OR:
-
-                aux = Token(Tag.ADDOP)
+                aux = Word('ADDOP', Tag.ADDOP)
+                #aux = Token(Tag.ADDOP)
                 self.AddToken(aux)
+
+            else:
+                b = False
+                print(f'ERRO! Esperado ":", "+", "-" ou "or", recebido: {token.toString()}')
 
             token = self.nextToken()
 
-            print('estado 49')
+            #print('estado 49')
 
         return b
 
@@ -2188,11 +2311,13 @@ class Sintatico:
 
         while token.getTag() != Tag.FIM:
 
-            # simple_Expr -> (simple_Expr) ?* simple_Expr : simple_Expr
+            # simple_Expr -> (simple_Expr) ? simple_Expr : *simple_Expr
             # simple_Exprt -> *simple_Expr addop term
             if token.getTag() == Tag.SIMPLEEXPRESSION:
+                #(token.toString())
                 b = self.e51() and b
-                break
+
+                return b
 
             # simple_Expr -> *term
             # term -> *term mulop factor_a
@@ -2206,12 +2331,14 @@ class Sintatico:
 
             # term -> *factor_a
             elif token.getTag() == Tag.FACTORA:
-                aux = Token(Tag.TERM)
+                aux = Word('TERM', Tag.TERM)
+                #aux = Token(Tag.TERM)
                 self.AddToken(aux)
 
             # factor_a -> *factor
             elif token.getTag() == Tag.FACTOR:
-                aux = Token(Tag.FACTORA)
+                aux = Word('FACTOR-A', Tag.FACTORA)
+                #aux = Token(Tag.FACTORA)
                 self.AddToken(aux)
 
             # factor_a -> *not factor
@@ -2223,20 +2350,25 @@ class Sintatico:
                 b = self.e31() and b
 
             elif token.getTag() == Tag.ID:
-
-                aux = Token(Tag.FACTOR)
+                aux = Word('FACTOR', Tag.FACTOR)
+                #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
 
             # factor -> *constant
             elif token.getTag() == Tag.NUM:
-                aux = Token(Tag.FACTOR)
+                aux = Word('FACTOR', Tag.FACTOR)
+                #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
+
+            else:
+                b = False
+                print(f'ERRO! Esperado "identifier", "numero", "(", "not" ou "-", recebido: {token.toString()}')
 
             token = self.nextToken()
 
         return b
 
-    # simple_Expr -> (simple_Expr) ? simple_Expr* : simple_Expr
+    # simple_Expr -> (simple_Expr) ? simple_Expr : *simple_Expr
     # simple_Expr -> simple_Expr *addop term
     def e51(self):
 
@@ -2252,22 +2384,24 @@ class Sintatico:
                 return b
 
             elif token.getTag() == Tag.ADD:
-                aux = Token(Tag.ADDOP)
+                aux = Word('ADDOP', Tag.ADDOP)
+                #aux = Token(Tag.ADDOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.SUB:
-
-                aux = Token(Tag.ADDOP)
+                aux = Word('ADDOP', Tag.ADDOP)
+                #aux = Token(Tag.ADDOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.OR:
-
-                aux = Token(Tag.ADDOP)
+                aux = Word('ADDOP', Tag.ADDOP)
+                #aux = Token(Tag.ADDOP)
                 self.AddToken(aux)
 
             else:
 
-                aux = Token(Tag.SIMPLEEXPRESSION)
+                aux = Word('simple_Expr', Tag.SIMPLEEXPRESSION)
+                #aux = Token(Tag.SIMPLEEXPRESSION)
                 self.AddToken(token)
                 self.AddToken(aux)
 
@@ -2275,6 +2409,6 @@ class Sintatico:
 
             token = self.nextToken()
 
-            print('estado 49')
+            #print('estado 49')
 
         return b

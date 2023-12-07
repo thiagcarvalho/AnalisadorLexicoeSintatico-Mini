@@ -6,8 +6,8 @@ begin
     read(nota2);
     media := (nota1 + nota2) / 2;
     if (media >= 6) then
-        write("Aprovado!")
+        write("Aprovado!");
     else
-        write("Reprovado.")
-    end
+        write("Reprovado.");
+    end;
 end
