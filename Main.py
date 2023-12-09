@@ -48,8 +48,7 @@ def testeSintatico(string):
         print("Falha na analisa sintática!")
 
 
-
-arq = "teste9.txt"  # Substitua pelo caminho do seu arquivo de texto
+arq = "testes_corrigidos/teste1.txt"  # Substitua pelo caminho do seu arquivo de texto
 
 #testeLexico(arq)
 testeSintatico(arq)

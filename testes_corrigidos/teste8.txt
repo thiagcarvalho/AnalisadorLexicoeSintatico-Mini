@@ -1,0 +1,10 @@
+program teste8
+declare
+    integer x, y, z;
+begin
+    x := 10;
+    y := 20;
+    z := x + y;
+    write("A soma de x e y é: ");
+    write(z);
+end
