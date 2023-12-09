@@ -6,6 +6,6 @@ begin
     read(b);
     read(c);
     % identificar o maior
-    maior:= ((a>b) and (a>c)) ?a: ((b>c)) ?b:c;
+    maior:= (a>b and a>c) ?a: (b>c) ?b:c;
     write(maior);
 end

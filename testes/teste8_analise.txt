@@ -1,0 +1,40 @@
+Recebido o token: program do Léxico
+Recebido o token: teste8 do Léxico
+Recebido o token: declare do Léxico
+Recebido o token: integer do Léxico
+Recebido o token: x do Léxico
+Recebido o token: , do Léxico
+Recebido o token: y do Léxico
+Recebido o token: , do Léxico
+Recebido o token: z do Léxico
+Recebido o token: ; do Léxico
+Recebido o token: begin do Léxico
+Recebido o token: x do Léxico
+Recebido o token: := do Léxico
+Recebido o token: 10 do Léxico
+Recebido o token: ; do Léxico
+Recebido o token: y do Léxico
+Recebido o token: := do Léxico
+Recebido o token: 20 do Léxico
+Recebido o token: ; do Léxico
+Recebido o token: z do Léxico
+Recebido o token: := do Léxico
+Recebido o token: x do Léxico
+Recebido o token: + do Léxico
+Recebido o token: y do Léxico
+Recebido o token: ; do Léxico
+Recebido o token: write do Léxico
+Recebido o token: ( do Léxico
+Recebido o token: "A soma de x e y Ã©: " do Léxico
+Recebido o token: ) do Léxico
+Recebido o token: ; do Léxico
+Recebido o token: write do Léxico
+Recebido o token: ( do Léxico
+Recebido o token: z do Léxico
+Recebido o token: ) do Léxico
+Recebido o token: end do Léxico
+ERRO! Esperado ";" recebido end
+Recebido o token: FIM do Léxico
+Recebido o token: FIM do Léxico
+Recebido o token: FIM do Léxico
+Falha na analisa sintática!

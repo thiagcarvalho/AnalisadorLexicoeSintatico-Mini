@@ -1,0 +1,53 @@
+Recebido o token: program do Léxico
+Recebido o token: teste1 do Léxico
+Recebido o token: declare do Léxico
+Recebido o token: integer do Léxico
+Recebido o token: a do Léxico
+Recebido o token: , do Léxico
+Recebido o token: b do Léxico
+Recebido o token: , do Léxico
+Recebido o token: c do Léxico
+Recebido o token: ; do Léxico
+Recebido o token: integer do Léxico
+Recebido o token: result do Léxico
+Recebido o token: ; do Léxico
+Recebido o token: begin do Léxico
+Recebido o token: read do Léxico
+Recebido o token: ( do Léxico
+Recebido o token: a do Léxico
+Recebido o token: ) do Léxico
+Recebido o token: ; do Léxico
+Recebido o token: read do Léxico
+Recebido o token: ( do Léxico
+Recebido o token: c do Léxico
+Recebido o token: ) do Léxico
+Recebido o token: ; do Léxico
+Recebido o token: b do Léxico
+Recebido o token: := do Léxico
+Recebido o token: 10 do Léxico
+Recebido o token: ; do Léxico
+Recebido o token: result do Léxico
+Recebido o token: := do Léxico
+Recebido o token: ( do Léxico
+Recebido o token: a do Léxico
+Recebido o token: * do Léxico
+Recebido o token: c do Léxico
+Recebido o token: ) do Léxico
+Recebido o token: / do Léxico
+Recebido o token: ( do Léxico
+Recebido o token: b do Léxico
+Recebido o token: + do Léxico
+Recebido o token: 5 do Léxico
+Recebido o token: write do Léxico
+ERRO! Esperado ")" recebido, write
+Recebido o token: ( do Léxico
+ERRO! Esperado ")" recebido, (
+Recebido o token: result do Léxico
+ERRO! Esperado ")" recebido, result
+Recebido o token: ) do Léxico
+Recebido o token: end do Léxico
+ERRO! Esperado ";" recebido end
+Recebido o token: FIM do Léxico
+Recebido o token: FIM do Léxico
+Recebido o token: FIM do Léxico
+Falha na analisa sintática!

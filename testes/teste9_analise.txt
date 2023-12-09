@@ -1,0 +1,60 @@
+Recebido o token: program do Léxico
+Recebido o token: teste9 do Léxico
+Recebido o token: declare do Léxico
+Recebido o token: decimal do Léxico
+Recebido o token: nota1 do Léxico
+Recebido o token: , do Léxico
+Recebido o token: nota2 do Léxico
+Recebido o token: , do Léxico
+Recebido o token: media do Léxico
+Recebido o token: ; do Léxico
+Recebido o token: begin do Léxico
+Recebido o token: read do Léxico
+Recebido o token: ( do Léxico
+Recebido o token: nota1 do Léxico
+Recebido o token: ) do Léxico
+Recebido o token: ; do Léxico
+Recebido o token: read do Léxico
+Recebido o token: ( do Léxico
+Recebido o token: nota2 do Léxico
+Recebido o token: ) do Léxico
+Recebido o token: ; do Léxico
+Recebido o token: media do Léxico
+Recebido o token: := do Léxico
+Recebido o token: ( do Léxico
+Recebido o token: nota1 do Léxico
+Recebido o token: + do Léxico
+Recebido o token: nota2 do Léxico
+Recebido o token: ) do Léxico
+Recebido o token: / do Léxico
+Recebido o token: 2 do Léxico
+Recebido o token: ; do Léxico
+Recebido o token: if do Léxico
+Recebido o token: ( do Léxico
+Recebido o token: media do Léxico
+Recebido o token: >= do Léxico
+Recebido o token: 6 do Léxico
+Recebido o token: ) do Léxico
+Recebido o token: then do Léxico
+Recebido o token: write do Léxico
+Recebido o token: ( do Léxico
+Recebido o token: "Aprovado!" do Léxico
+Recebido o token: ) do Léxico
+Recebido o token: else do Léxico
+ERRO! Esperado ";" recebido else
+Recebido o token: write do Léxico
+ERRO! Esperado ";" recebido write
+Recebido o token: ( do Léxico
+ERRO! Esperado ";" recebido (
+Recebido o token: "Reprovado." do Léxico
+ERRO! Esperado ";" recebido "Reprovado."
+Recebido o token: ) do Léxico
+ERRO! Esperado ";" recebido )
+Recebido o token: end do Léxico
+ERRO! Esperado ";" recebido end
+Recebido o token: ; do Léxico
+Recebido o token: end do Léxico
+Recebido o token: FIM do Léxico
+Recebido o token: FIM do Léxico
+Recebido o token: FIM do Léxico
+Falha na analisa sintática!

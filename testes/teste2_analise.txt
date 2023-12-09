@@ -1,0 +1,64 @@
+Recebido o token: program do Léxico
+Recebido o token: teste2 do Léxico
+Recebido o token: declarando do Léxico
+ERRO! Esperado a palavra "declare" ou "begin", recebido declarando
+Recebido o token: integer do Léxico
+ERRO! Esperado a palavra "declare" ou "begin", recebido integer
+Recebido o token: a do Léxico
+ERRO! Esperado a palavra "declare" ou "begin", recebido a
+Recebido o token: ; do Léxico
+ERRO! Esperado a palavra "declare" ou "begin", recebido ;
+Recebido o token: integer do Léxico
+ERRO! Esperado a palavra "declare" ou "begin", recebido integer
+Recebido o token: b do Léxico
+ERRO! Esperado a palavra "declare" ou "begin", recebido b
+Recebido o token: ; do Léxico
+ERRO! Esperado a palavra "declare" ou "begin", recebido ;
+Recebido o token: integer do Léxico
+ERRO! Esperado a palavra "declare" ou "begin", recebido integer
+Recebido o token: c do Léxico
+ERRO! Esperado a palavra "declare" ou "begin", recebido c
+Recebido o token: ; do Léxico
+ERRO! Esperado a palavra "declare" ou "begin", recebido ;
+Recebido o token: begin do Léxico
+Recebido o token: read do Léxico
+Recebido o token: ( do Léxico
+Recebido o token: a do Léxico
+Recebido o token: ) do Léxico
+Recebido o token: ; do Léxico
+Recebido o token: b do Léxico
+Recebido o token: := do Léxico
+Recebido o token: a do Léxico
+Recebido o token: * do Léxico
+Recebido o token: a do Léxico
+Recebido o token: ; do Léxico
+Recebido o token: c do Léxico
+Recebido o token: := do Léxico
+Recebido o token: b do Léxico
+Recebido o token: + do Léxico
+Recebido o token: a do Léxico
+Recebido o token: / do Léxico
+Recebido o token: 2 do Léxico
+Recebido o token: * do Léxico
+ERRO! Esperado ";" recebido *
+Recebido o token: ( do Léxico
+ERRO! Esperado ";" recebido (
+Recebido o token: 3 do Léxico
+ERRO! Esperado ";" recebido 3
+Recebido o token: + do Léxico
+ERRO! Esperado ";" recebido +
+Recebido o token: 5 do Léxico
+ERRO! Esperado ";" recebido 5
+Recebido o token: ) do Léxico
+ERRO! Esperado ";" recebido )
+Recebido o token: ; do Léxico
+Recebido o token: write do Léxico
+Recebido o token: ( do Léxico
+Recebido o token: c do Léxico
+Recebido o token: ) do Léxico
+Recebido o token: end do Léxico
+ERRO! Esperado ";" recebido end
+Recebido o token: FIM do Léxico
+Recebido o token: FIM do Léxico
+Recebido o token: FIM do Léxico
+Falha na analisa sintática!

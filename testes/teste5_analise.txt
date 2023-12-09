@@ -1,0 +1,49 @@
+Recebido o token: program do Léxico
+Recebido o token: teste5 do Léxico
+Recebido o token: declare do Léxico
+Recebido o token: integer do Léxico
+Recebido o token: j do Léxico
+Recebido o token: , do Léxico
+Recebido o token: k do Léxico
+Recebido o token: ; do Léxico
+Recebido o token: begin do Léxico
+Recebido o token: read do Léxico
+Recebido o token: ( do Léxico
+Recebido o token: j do Léxico
+Recebido o token: ) do Léxico
+Recebido o token: ; do Léxico
+Recebido o token: read do Léxico
+Recebido o token: ( do Léxico
+Recebido o token: k do Léxico
+Recebido o token: ) do Léxico
+Recebido o token: ; do Léxico
+Recebido o token: if do Léxico
+Recebido o token: ( do Léxico
+Recebido o token: k do Léxico
+Recebido o token: <> do Léxico
+Recebido o token: 0 do Léxico
+Recebido o token: ) do Léxico
+Recebido o token: then do Léxico
+Recebido o token: result do Léxico
+Recebido o token: := do Léxico
+Recebido o token: j do Léxico
+Recebido o token: / do Léxico
+Recebido o token: k do Léxico
+Recebido o token: else do Léxico
+ERRO! Esperado ";" recebido else
+Recebido o token: result do Léxico
+ERRO! Esperado ";" recebido result
+Recebido o token: := do Léxico
+ERRO! Esperado ";" recebido :=
+Recebido o token: 0 do Léxico
+ERRO! Esperado ";" recebido 0
+Recebido o token: end do Léxico
+ERRO! Esperado ";" recebido end
+Recebido o token: end do Léxico
+ERRO! Esperado ";" recebido end
+Recebido o token: FIM do Léxico
+Recebido o token: FIM do Léxico
+Recebido o token: FIM do Léxico
+Recebido o token: FIM do Léxico
+Recebido o token: FIM do Léxico
+Falha na analisa sintática!
