@@ -6,7 +6,7 @@ class Sintatico:
 
         self.Lex = Lexico(arq)
         self.pilha_token = []
-        arq_saida = arq_saida + ".cpp"
+        arq_saida = arq_saida
         self.arq_saida = open(f"{arq_saida}", 'w')
 
     def nextToken(self):
@@ -559,7 +559,6 @@ class Sintatico:
     def e14(self):
 
         b = True
-
         token = self.nextToken()
 
         while token.getTag() != Tag.FIM:
@@ -584,9 +583,7 @@ class Sintatico:
     def e15(self):
 
         self.arq_saida.write("(")
-
         b = True
-
         token = self.nextToken()
 
         while token.getTag() != Tag.FIM:
@@ -606,14 +603,10 @@ class Sintatico:
 
     # read-stmt -> read(identifier*)
     def e16(self):
-
         aux = self.nextToken()
-
         self.arq_saida.write(aux.lexeme)
-
         token = self.nextToken()
         b = True
-
 
         while token.getTag() != Tag.FIM:
 

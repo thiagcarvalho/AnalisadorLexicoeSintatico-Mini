@@ -1,7 +1,7 @@
 #include<iostream>
 int main(){
 int a, b, c;
-float result;
+int result;
 std::cin>>(a);
 std::cin>>(c);
 b=10;

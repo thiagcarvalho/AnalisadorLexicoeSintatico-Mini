@@ -66,7 +66,7 @@ def compile(arq):
     os.system(command)
 
 
-arq = "testes_corrigidos/teste8.txt"  # Substitua pelo caminho do seu arquivo de texto
+arq = "testes_corrigidos/teste1.txt"  # Substitua pelo caminho do seu arquivo de texto
 
 arq_saida = os.path.basename(arq)
 arq_saida, extensao = arq_saida.split(".")
