@@ -49,15 +49,21 @@ class Num(Token):
 
 class Word(Token):
 
-    def __init__(self, lex, tag):
+    def __init__(self, lex, tag, tipo = None):
         super().__init__(tag)
         self.lexeme = lex
+        self.tipo = tipo
 
+    def type(self, tipo):
+        self.tipo = tipo
     def toString(self):
         return self.lexeme
 
     def getTag(self):
         return self.tag
+
+    def getTipo(self):
+        return self.tipo
 
 class Words():
     And = Word("and", Tag.AND)

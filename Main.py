@@ -1,6 +1,7 @@
 from Lexico import *
 from Token import Token
 from Sintatico import *
+import os
 
 def testeLexico(string):
 
@@ -16,6 +17,7 @@ def testeLexico(string):
 
         if partoken.getTag() == Tag.ID:
             print(f'ID: {partoken.toString()}')
+
         elif partoken.getTag() == Tag.LIT:
             print(f'Literal: {partoken.toString()}')
         elif partoken.getTag() == Tag.NUM:
@@ -25,6 +27,7 @@ def testeLexico(string):
 
         token = L.getToken()
         partoken = Word(token.toString(), token.getTag())
+
 
     print('\nImprimindo a Tabela de Simbolos')
 
@@ -37,22 +40,41 @@ def testeLexico(string):
             print(f'{key} Tag: {id}')
 
 
-def testeSintatico(string):
+def testeSintatico(entrada, saida):
 
-    arq = string
-    S = Sintatico(arq)
+    arq = entrada
+    arq_saida = saida
+    S = Sintatico(arq, arq_saida)
+    S.IniciaAnalise()
 
-    if S.IniciaAnalise():
-        print("Analise Sintatica feita com sucesso!")
-    else:
-        print("Falha na analisa sintática!")
+    print('\nImprimindo a Tabela de Simbolos')
+
+    for key, value in S.Lex.Env.table.items():
+        id = value[1]
+
+        if len(value) > 2:
+            tipo = value[2]
+            print(f'ID: {key} \t Tipo: {tipo}')
+        else:
+            print(f'Lexema: {key} Tag: {id}')
+
+    compile(S.arq_saida)
+
+def compile(arq):
+
+    command = f'g++ {arq}.cpp -o {arq}.exe'
+    os.system(command)
 
 
-arq = "testes_corrigidos/teste1.txt"  # Substitua pelo caminho do seu arquivo de texto
+arq = "testes_corrigidos/teste8.txt"  # Substitua pelo caminho do seu arquivo de texto
+
+arq_saida = os.path.basename(arq)
+arq_saida, extensao = arq_saida.split(".")
+arq_saida = f"{arq_saida}_codigo"
 
 #testeLexico(arq)
-testeSintatico(arq)
-
+testeSintatico(arq, arq_saida)
+#compile(arq_saida)
 
 
 

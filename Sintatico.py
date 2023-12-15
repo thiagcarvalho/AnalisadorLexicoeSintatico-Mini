@@ -2,10 +2,12 @@ from Lexico import *
 
 class Sintatico:
 
-    def __init__(self, arq):
+    def __init__(self, arq, arq_saida):
 
         self.Lex = Lexico(arq)
         self.pilha_token = []
+        arq_saida = arq_saida + ".cpp"
+        self.arq_saida = open(f"{arq_saida}", 'w')
 
     def nextToken(self):
 
@@ -41,6 +43,10 @@ class Sintatico:
 
             token = self.nextToken()
 
+        if b:
+            print("Analise Sintatica feita com sucesso!")
+        else:
+            print("Falha na analisa sintática!")
 
         return b
 
@@ -63,17 +69,20 @@ class Sintatico:
 
         return b
 
-    # S->program id* body $
+    # S->program id* body $X
     def e2(self):
 
+        self.arq_saida.write('#include<iostream>\nint main(){\n')
         token = self.nextToken()
         b = True
 
         while token.getTag() != Tag.FIM:
 
+            #body -> *declare decl-lst begin stmt-lst end
             if token.getTag() == Tag.DECL:
                 b = self.e3() and b
 
+            #body -> *begin stmt-lst end
             elif token.getTag() == Tag.BGN:
                 b = self.e10() and b
 
@@ -89,7 +98,7 @@ class Sintatico:
 
         return b
 
-    #body -> declare * dec-lst begin stmt-lst end
+    #body -> declare * dec-lst begin stmt-lst end x
     def e3(self):
 
         token = self.nextToken()
@@ -105,16 +114,18 @@ class Sintatico:
             # type -> *integer
             elif token.getTag() == Tag.INT:
                 aux = Word('Type',Tag.TYPE)
+                aux.type("int ")
                 self.AddToken(aux)
 
             # typer -> *decimal
             elif token.getTag() == Tag.DEC:
                 aux = Word('Type', Tag.TYPE)
+                aux.type("float ")
                 self.AddToken(aux)
 
             #decl -> *type ident-lst
             elif token.getTag() == Tag.TYPE:
-                #self.AddToken(token)
+                self.AddToken(token)
                 b = self.e4() and b
 
             # decl-list -> *decl decl-list'
@@ -133,7 +144,14 @@ class Sintatico:
     #indet-list -> * identifier indent-list'
     def e4(self):
 
+        #desempilho o type
+        tipo = self.nextToken()
+        self.arq_saida.write(tipo.tipo)
+
+        #pego o id
         token = self.nextToken()
+        #print(f'O token é {token.lexeme} do tipo {token.tipo}')
+
 
         b = True
 
@@ -141,7 +159,9 @@ class Sintatico:
 
             if token.getTag() == Tag.ID:
 
+                token = self.Lex.Env.settype(token.lexeme, tipo.getTipo())
                 self.AddToken(token)
+
                 b = self.e5() and b
 
             elif token.getTag() == Tag.IDLST:
@@ -165,16 +185,17 @@ class Sintatico:
     def e5(self):
 
         aux = self.nextToken()
-
-        b = True
+        self.arq_saida.write(aux.lexeme)
 
         token = self.nextToken()
+
+        b = True
 
         while token.getTag() != Tag.FIM:
 
             if token.getTag() == Tag.COM:
 
-                self.AddToken(token)
+                self.AddToken(aux)
                 b = self.e6() and b
 
             elif token.getTag() == Tag.IDLSTL:
@@ -192,9 +213,11 @@ class Sintatico:
 
         return b
 
-    #ident-list' -> , *  ident-list
-    #ident-list -> * id ident-list'
+    #ident-list' -> , *  ident-list X
+    #ident-list -> * id ident-list' X
     def e6(self):
+
+        self.arq_saida.write(', ')
 
         aux = self.nextToken()
 
@@ -206,7 +229,9 @@ class Sintatico:
 
             if token.getTag() == Tag.ID:
 
+                token = self.Lex.Env.settype(token.lexeme, aux.getTipo())
                 self.AddToken(token)
+
                 b = self.e5() and b
 
             elif token.getTag() == Tag.IDLST:
@@ -248,24 +273,27 @@ class Sintatico:
     #decl-lst -> decl; * [decl;]
     def e8(self):
 
+        self.arq_saida.write(';\n')
         b = True
 
         token = self.nextToken()
-
+        print(f'to aqui {token.lexeme}')
 
         while token.getTag() != Tag.FIM:
 
             if token.getTag() == Tag.INT:
                 aux = Word('Type', Tag.TYPE)
+                aux.type('int ')
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.DEC:
                 aux = Word('Type', Tag.TYPE)
+                aux.type('float ')
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.TYPE:
 
-                #self.AddToken(token)
+                self.AddToken(token)
                 b = self.e4() and b
 
             elif token.getTag() == Tag.DECL:
@@ -330,18 +358,25 @@ class Sintatico:
 
             #stmt -> assign-stmt
             elif token.getTag() == Tag.ASSIGNSTMT:
+                self.arq_saida.write(";\n")
+
                 aux = Word('STMT', Tag.STMT)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.DOWHILESTMT:
+                self.arq_saida.write(');\n')
+
                 aux = Word('STMT', Tag.STMT)
                 #aux = Token(Tag.STMT)
                 self.AddToken(aux)
 
             # stmt -> *readstmt
             elif token.getTag() == Tag.READSTMT:
+
+                self.arq_saida.write(');\n')
+
                 aux = Word('STMT', Tag.STMT)
-                #aux = Token(Tag.STMT)
+
                 self.AddToken(aux)
 
             # stmt -> if-stmt
@@ -352,12 +387,16 @@ class Sintatico:
 
             # stmt => write-stmt
             elif token.getTag() == Tag.WRITESTMT:
+                self.arq_saida.write(');\n')
+
                 aux = Word('STMT', Tag.STMT)
                 #aux = Token(Tag.STMT)
                 self.AddToken(aux)
 
             # assign-stmt -> *identifier := simple_Expr
             elif token.getTag() == Tag.ID:
+
+                self.AddToken(token)
                 b = self.e17() and b
 
             # if-stmt -> *if condition then stmt-list end
@@ -388,6 +427,8 @@ class Sintatico:
     # read-stmt -> read*(identifier)
     def e11(self):
 
+        self.arq_saida.write('std::cin>>')
+
         b = True
 
         token = self.nextToken()
@@ -409,9 +450,11 @@ class Sintatico:
     # write-stmt -> write*(writable)
     def e12(self):
 
-        b = True
+        self.arq_saida.write("std::cout<<")
 
         token = self.nextToken()
+
+        b = True
 
         while token.getTag() != Tag.FIM:
 
@@ -430,9 +473,11 @@ class Sintatico:
     # write-stmt -> write(*writable)
     def e13(self):
 
-        b = True
+        self.arq_saida.write("(")
 
         token = self.nextToken()
+        b = True
+
 
         while token.getTag() != Tag.FIM:
 
@@ -448,6 +493,9 @@ class Sintatico:
 
             #writable -> literal
             elif token.getTag() == Tag.LIT:
+                #self.arq_saida.write("\"")
+                self.arq_saida.write(token.lexeme)
+
                 aux = Word('WRITEABLE', Tag.WRITEABLE)
                 #aux = Token(Tag.WRITEABLE)
                 self.AddToken(aux)
@@ -478,12 +526,16 @@ class Sintatico:
                 b = self.e31() and b
 
             elif token.getTag() == Tag.ID:
+                self.arq_saida.write(token.lexeme)
+
                 aux = Word('FACTOR', Tag.FACTOR)
                 #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
 
             # factor -> *constant
             elif token.getTag() == Tag.NUM:
+                self.arq_saida.write(token.lexeme)
+
                 aux = Word('FACTOR', Tag.FACTOR)
                 #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
@@ -531,6 +583,8 @@ class Sintatico:
     # read-stmt -> read(*identifier)
     def e15(self):
 
+        self.arq_saida.write("(")
+
         b = True
 
         token = self.nextToken()
@@ -538,6 +592,7 @@ class Sintatico:
         while token.getTag() != Tag.FIM:
 
             if token.getTag() == Tag.ID:
+                self.AddToken(token)
                 b = self.e16() and b
                 return b
 
@@ -552,9 +607,13 @@ class Sintatico:
     # read-stmt -> read(identifier*)
     def e16(self):
 
-        b = True
+        aux = self.nextToken()
+
+        self.arq_saida.write(aux.lexeme)
 
         token = self.nextToken()
+        b = True
+
 
         while token.getTag() != Tag.FIM:
 
@@ -574,9 +633,11 @@ class Sintatico:
     #assign-stmt -> identifier* := simple_Expr
     def e17(self):
 
-        b = True
+        aux = self.nextToken()
+        self.arq_saida.write(aux.lexeme)
 
         token = self.nextToken()
+        b = True
 
         while token.getTag() != Tag.FIM:
 
@@ -594,9 +655,10 @@ class Sintatico:
     #assign-stmt -> identifier :=* simple_Expr
     def e18(self):
 
-        b = True
+        self.arq_saida.write('=')
 
         token = self.nextToken()
+        b = True
 
         while token.getTag() != Tag.FIM:
 
@@ -615,7 +677,6 @@ class Sintatico:
             # factor -> *(expression)
             elif token.getTag() == Tag.OPAR:
                 b = self.e45() and b
-
 
             #term -> *factor_a
             elif  token.getTag() == Tag.FACTORA:
@@ -638,12 +699,18 @@ class Sintatico:
                 b = self.e31() and b
 
             elif token.getTag() == Tag.ID:
+
+                self.arq_saida.write(token.lexeme)
+
                 aux = Word('FACTOR', Tag.FACTOR)
                 #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
 
             #factor -> *constant
             elif token.getTag() == Tag.NUM:
+
+                self.arq_saida.write(token.lexeme)
+
                 aux = Word('FACTOR', Tag.FACTOR)
                 #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
@@ -697,12 +764,18 @@ class Sintatico:
             # stmt -> *assign-stmt
             elif token.getTag() == Tag.ASSIGNSTMT:
                 #print(f'o valor do b é {b}')
+
+                self.arq_saida.write(";\n")
+
                 aux = Word('STMT', Tag.STMT)
                 #aux = Token(Tag.STMT)
                 self.AddToken(aux)
 
             # stmt -> *readstmt
             elif token.getTag() == Tag.READSTMT:
+
+                self.arq_saida.write(');\n')
+
                 aux = Word('STMT', Tag.STMT)
                 #aux = Token(Tag.STMT)
                 self.AddToken(aux)
@@ -715,18 +788,23 @@ class Sintatico:
 
             # stmt -> *do-while-stmt
             elif token.getTag() == Tag.DOWHILESTMT:
+                self.arq_saida.write(');\n')
+
                 aux = Word('STMT', Tag.STMT)
                 #aux = Token(Tag.STMT)
                 self.AddToken(aux)
 
             # stmt => write-stmt
             elif token.getTag() == Tag.WRITESTMT:
+                self.arq_saida.write(');\n')
+
                 aux = Word('STMT', Tag.STMT)
                 #aux = Token(Tag.STMT)
                 self.AddToken(aux)
 
             # assign-stmt -> *identifier := simple_Expr
             elif token.getTag() == Tag.ID:
+                self.AddToken(token)
                 b = self.e17() and b
 
             # if-stmt -> *if condition then stmt-list end
@@ -762,10 +840,11 @@ class Sintatico:
     # factor_a -> not *factor
     def e21(self):
 
-        b = True
+        self.arq_saida.write("!")
 
         token = self.nextToken()
 
+        b = True
         while token.getTag() != Tag.FIM:
 
 
@@ -778,12 +857,16 @@ class Sintatico:
 
             #factor -> *identifier
             elif token.getTag() == Tag.ID:
+                self.arq_saida.write(token.lexeme)
+
                 aux = Word('FACTOR', Tag.FACTOR)
                 #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
 
             # factor -> *constant
             elif token.getTag() == Tag.NUM:
+                self.arq_saida.write(token.lexeme)
+
                 aux = Word('FACTOR', Tag.FACTOR)
                 #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
@@ -801,7 +884,7 @@ class Sintatico:
         return b
 
     # simple_Expr -> term*
-    # term -> term * mulop factor_a
+    # term -> term * mulop factor_a X
     def e22(self):
 
         b = True
@@ -812,27 +895,29 @@ class Sintatico:
 
             # term -> term mulop* factor_a
             if token.getTag() == Tag.MULOP:
+                self.arq_saida.write(token.lexeme)
+
                 b = self.e23() and b
                 return b
 
             elif token.getTag() == Tag.MLT:
-                aux = Word('MULOP', Tag.MULOP)
+                aux = Word(token.lexeme, Tag.MULOP)
                 #aux = Token(Tag.MULOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.DIV:
-                aux = Word('MULOP', Tag.MULOP)
+                aux = Word(token.lexeme, Tag.MULOP)
                 #aux = Token(Tag.MULOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.AND:
-                aux = Word('MULOP', Tag.MULOP)
+                aux = Word("&&", Tag.MULOP)
                 #aux = Token(Tag.MULOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.MOD:
-                aux = Word('MULOP', Tag.MULOP)
-                aux = Word('MULOP', Tag.MULOP)
+
+                aux = Word('%', Tag.MULOP)
                 #aux = Token(Tag.MULOP)
                 self.AddToken(aux)
 
@@ -855,9 +940,11 @@ class Sintatico:
     #term-> term mulop *factor_a
     def e23(self):
 
-        b = True
+        #aux = self.nextToken()
+        #self.arq_saida.write(aux.lexeme)
 
         token = self.nextToken()
+        b = True
 
         while token.getTag() != Tag.FIM:
 
@@ -885,12 +972,16 @@ class Sintatico:
 
             #factor -> *identifier
             elif token.getTag() == Tag.ID:
+                self.arq_saida.write(token.lexeme)
+
                 aux = Word('FACTOR', Tag.FACTOR)
                 #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
 
             # factor -> *constant
             elif token.getTag() == Tag.NUM:
+                self.arq_saida.write(token.lexeme)
+
                 aux = Word('FACTOR', Tag.FACTOR)
                 #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
@@ -912,9 +1003,11 @@ class Sintatico:
     # factor -> (*expression)
     def  e24(self):
 
-        b = True
+        self.arq_saida.write("(")
 
         token = self.nextToken()
+
+        b = True
 
         while token.getTag() != Tag.FIM:
 
@@ -960,12 +1053,18 @@ class Sintatico:
                 b = self.e31() and b
 
             elif token.getTag() == Tag.ID:
+
+                self.arq_saida.write(token.lexeme)
+
                 aux = Word('FACTOR', Tag.FACTOR)
                 #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
 
             # factor -> *constant
             elif token.getTag() == Tag.NUM:
+
+                self.arq_saida.write(token.lexeme)
+
                 aux = Word('FACTOR', Tag.FACTOR)
                 #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
@@ -995,56 +1094,60 @@ class Sintatico:
 
             # expression -> simple_Expr relop* simple_Expr
             if token.getTag() == Tag.RELOP:
+                self.arq_saida.write(token.lexeme)
+
                 b = self.e26() and b
                 return b
 
             # simple_Expr -> simple_Expr addop* term
             elif token.getTag() == Tag.ADDOP:
+                self.arq_saida.write(token.lexeme)
+
                 b = self.e28() and b
                 return b
 
             elif token.getTag() == Tag.EQ:
-                aux = Word('RELOP', Tag.RELOP)
+                aux = Word(token.lexeme, Tag.RELOP)
                 #aux = Token(Tag.RELOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.GT:
-                aux = Word('RELOP', Tag.RELOP)
+                aux = Word(token.lexeme, Tag.RELOP)
                 #aux = Token(Tag.RELOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.GE:
-                aux = Word('RELOP', Tag.RELOP)
+                aux = Word(token.lexeme, Tag.RELOP)
                 #aux = Token(Tag.RELOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.LT:
-                aux = Word('RELOP', Tag.RELOP)
+                aux = Word(token.lexeme, Tag.RELOP)
                 #aux = Token(Tag.RELOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.LE:
-                aux = Word('RELOP', Tag.RELOP)
+                aux = Word(token.lexeme, Tag.RELOP)
                 #aux = Token(Tag.RELOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.NE:
-                aux = Word('RELOP', Tag.RELOP)
+                aux = Word("!=", Tag.RELOP)
                 #aux = Token(Tag.RELOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.ADD:
-                aux = Word('ADDOP', Tag.ADDOP)
+                aux = Word(token.lexeme, Tag.ADDOP)
                 #aux = Token(Tag.ADDOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.SUB:
-                aux = Word('ADDOP', Tag.ADDOP)
+                aux = Word(token.lexeme, Tag.ADDOP)
                 #aux = Token(Tag.ADDOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.OR:
-                aux = Word('ADDOP', Tag.ADDOP)
+                aux = Word(token.lexeme, Tag.ADDOP)
                 #aux = Token(Tag.ADDOP)
                 self.AddToken(aux)
 
@@ -1107,12 +1210,16 @@ class Sintatico:
                 b = self.e31() and b
 
             elif token.getTag() == Tag.ID:
+                self.arq_saida.write(token.lexeme)
+
                 aux = Word('FACTOR', Tag.FACTOR)
                 #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
 
             # factor -> *constant
             elif token.getTag() == Tag.NUM:
+                self.arq_saida.write(token.lexeme)
+
                 aux = Word('FACTOR', Tag.FACTOR)
                 #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
@@ -1129,13 +1236,15 @@ class Sintatico:
     # factor -> ( expression *)
     def e27(self):
 
-        b = True
+
 
         token = self.nextToken()
+        b = True
 
         while token.getTag() != Tag.FIM:
 
             if token.getTag() == Tag.CPAR:
+                self.arq_saida.write(token.lexeme)
 
                 aux = Word('FACTOR', Tag.FACTOR)
                 #aux = Token(Tag.FACTOR)
@@ -1170,6 +1279,7 @@ class Sintatico:
 
             #factor -> *(expression)
             elif token.getTag() == Tag.OPAR:
+
                 b = self.e24() and b
 
             #term -> *factor_a
@@ -1193,12 +1303,16 @@ class Sintatico:
                 b = self.e31() and b
 
             elif token.getTag() == Tag.ID:
+                self.arq_saida.write(token.lexeme)
+
                 aux = Word('FACTOR', Tag.FACTOR)
                 #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
 
             #factor -> *constant
             elif token.getTag() == Tag.NUM:
+                self.arq_saida.write(token.lexeme)
+
                 aux = Word('FACTOR', Tag.FACTOR)
                 #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
@@ -1228,22 +1342,24 @@ class Sintatico:
 
             # term -> term mulop* factor_a
             if token.getTag() == Tag.ADDOP:
+                self.arq_saida.write(token.lexeme)
+
                 b = self.e28() and b
                 return b
 
             elif token.getTag() == Tag.ADD:
-                aux = Word('ADDOP', Tag.ADDOP)
+                aux = Word(token.lexeme, Tag.ADDOP)
                 #aux = Token(Tag.ADDOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.SUB:
-                aux = Word('ADDOP', Tag.ADDOP)
+                aux = Word(token.lexeme, Tag.ADDOP)
                 aux = Token(Tag.ADDOP)
                 self.AddToken(aux)
 
 
             elif token.getTag() == Tag.OR:
-                aux = Word('ADDOP', Tag.ADDOP)
+                aux = Word(token.lexeme, Tag.ADDOP)
                 aux = Token(Tag.ADDOP)
                 self.AddToken(aux)
 
@@ -1275,26 +1391,29 @@ class Sintatico:
 
             # term -> term mulop* factor_a
             if token.getTag() == Tag.MULOP:
+
+                self.arq_saida.write(token.lexeme)
+
                 b = self.e23() and b
                 return b
 
             elif token.getTag() == Tag.MLT:
-                aux = Word('MULOP', Tag.MULOP)
+                aux = Word(token.lexeme, Tag.MULOP)
                 #aux = Token(Tag.MULOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.DIV:
-                aux = Word('MULOP', Tag.MULOP)
+                aux = Word(token.lexeme, Tag.MULOP)
                 #aux = Token(Tag.MULOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.AND:
-                aux = Word('MULOP', Tag.MULOP)
+                aux = Word("&&", Tag.MULOP)
                 #aux = Token(Tag.MULOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.MOD:
-                aux = Word('MULOP', Tag.MULOP)
+                aux = Word('%', Tag.MULOP)
                 #aux = Token(Tag.MULOP)
                 self.AddToken(aux)
 
@@ -1316,9 +1435,11 @@ class Sintatico:
     #factor_a -> *- factor
     def e31(self):
 
-        b = True
+        self.arq_saida.write('-')
 
         token = self.nextToken()
+
+        b = True
 
         while token.getTag() != Tag.FIM:
 
@@ -1331,18 +1452,23 @@ class Sintatico:
 
             # factor -> *identifier
             elif token.getTag() == Tag.ID:
+                self.arq_saida.write(token.lexeme)
+
                 aux = Word('FACTOR', Tag.FACTOR)
                 #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
 
             # factor -> *constant
             elif token.getTag() == Tag.NUM:
+                self.arq_saida.write(token.lexeme)
+
                 aux = Word('FACTOR', Tag.FACTOR)
                 #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
 
             # factor -> *(expression)
             elif token.getTag() == Tag.OPAR:
+                self.arq_saida.write(token.lexeme)
                 b = self.e21() and b
 
             else:
@@ -1357,13 +1483,17 @@ class Sintatico:
     #body -> declare dec-lst begin stmt-list *end
     def e32(self):
 
-        b = True
+
 
         token = self.nextToken()
+        b = True
 
         while token.getTag() != Tag.FIM:
 
             if token.getTag() == Tag.END:
+
+                self.arq_saida.write("}")
+
                 aux = Word('BODY', Tag.BODY)
                 #aux = Token(Tag.BODY)
                 self.AddToken(aux)
@@ -1408,23 +1538,25 @@ class Sintatico:
 
             # simple_Expr -> simple_Expr *addop term
             if token.getTag() == Tag.ADDOP:
+                self.arq_saida.write(token.lexeme)
+
                 b = self.e28() and b
                 return b
 
             elif token.getTag() == Tag.ADD:
-                aux = Word('ADDOP', Tag.ADDOP)
+                aux = Word(token.lexeme, Tag.ADDOP)
                 #aux = Token(Tag.ADDOP)
                 self.AddToken(aux)
 
 
             elif token.getTag() == Tag.SUB:
-                aux = Word('ADDOP', Tag.ADDOP)
+                aux = Word(token.lexeme, Tag.ADDOP)
                 #aux = Token(Tag.ADDOP)
                 self.AddToken(aux)
 
 
             elif token.getTag() == Tag.OR:
-                aux = Word('ADDOP', Tag.ADDOP)
+                aux = Word(token.lexeme, Tag.ADDOP)
                 #aux = Token(Tag.ADDOP)
                 self.AddToken(aux)
 
@@ -1443,9 +1575,10 @@ class Sintatico:
     # do-while-stmt -> do * stmt-list stmt-suffix
     def e35(self):
 
-        b = True
+        self.arq_saida.write("do{\n")
 
         token = self.nextToken()
+        b = True
 
         while token.getTag() != Tag.FIM:
 
@@ -1472,6 +1605,8 @@ class Sintatico:
 
             # stmt -> *do-while-stmt
             elif token.getTag() == Tag.DOWHILESTMT:
+                self.arq_saida.write(');\n')
+
                 aux = Word('STMT', Tag.STMT)
                 #aux = Token(Tag.STMT)
                 self.AddToken(aux)
@@ -1484,12 +1619,15 @@ class Sintatico:
 
             # stmt => write-stmt
             elif token.getTag() == Tag.WRITESTMT:
+                self.arq_saida.write(");\n")
+
                 aux = Word('STMT', Tag.STMT)
                 #aux = Token(Tag.STMT)
                 self.AddToken(aux)
 
             # assign-stmt -> *identifier := simple_Expr
             elif token.getTag() == Tag.ID:
+                self.AddToken(token)
                 self.e17()
 
             # if-stmt -> *if condition then stmt-list end
@@ -1549,6 +1687,8 @@ class Sintatico:
     #stmt-suffix -> while* condition
     def e37(self):
 
+        self.arq_saida.write('}while(')
+
         b = True
 
         token = self.nextToken()
@@ -1572,7 +1712,6 @@ class Sintatico:
             # simple_Exprt -> *simple_Expr addop simple_Expr
             elif token.getTag() == Tag.SIMPLEEXPRESSION:
                 b = self.e25() and b
-
 
             # simple_Expr -> *term
             # term -> *term mulop factor_a
@@ -1603,12 +1742,16 @@ class Sintatico:
                 b = self.e31() and b
 
             elif token.getTag() == Tag.ID:
+                self.arq_saida.write(token.lexeme)
+
                 aux = Word('FACTOR', Tag.FACTOR)
                 #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
 
             # factor -> *constant
             elif token.getTag() == Tag.NUM:
+                self.arq_saida.write(token.lexeme)
+
                 aux = Word('FACTOR', Tag.FACTOR)
                 #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
@@ -1634,6 +1777,8 @@ class Sintatico:
 
             # simple_Expr -> simple_Expr addop* term
             if token.getTag() == Tag.ADDOP:
+
+                self.arq_saida.write(token.lexeme)
                 b = self.e28() and b
 
                 token = self.nextToken()
@@ -1644,17 +1789,17 @@ class Sintatico:
                 return b
 
             elif token.getTag() == Tag.ADD:
-                aux = Word('ADDOP', Tag.ADDOP)
+                aux = Word(token.lexeme, Tag.ADDOP)
                 #aux = Token(Tag.ADDOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.SUB:
-                aux = Word('ADDOP', Tag.ADDOP)
+                aux = Word(token.lexeme, Tag.ADDOP)
                 #aux = Token(Tag.ADDOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.OR:
-                aux = Word('ADDOP', Tag.ADDOP)
+                aux = Word(token.lexeme, Tag.ADDOP)
                 #aux = Token(Tag.ADDOP)
                 self.AddToken(aux)
 
@@ -1674,9 +1819,10 @@ class Sintatico:
     # if-stmt -> if* condition then stmt-list else stm-list end
     def e39(self):
 
-        b = True
+        self.arq_saida.write('if(')
 
         token = self.nextToken()
+        b = True
 
         while token.getTag() != Tag.FIM:
 
@@ -1728,12 +1874,16 @@ class Sintatico:
 
             # factor_a -> identifier
             elif token.getTag() == Tag.ID:
+                self.arq_saida.write(token.lexeme)
+
                 aux = Word('FACTOR', Tag.FACTOR)
                 # aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
 
             # factor -> *constant
             elif token.getTag() == Tag.NUM:
+                self.arq_saida.write(token.lexeme)
+
                 aux = Word('FACTOR', Tag.FACTOR)
                 #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
@@ -1750,9 +1900,10 @@ class Sintatico:
     # if-stmt -> if condition *then stmt-list else stm-list end
     def e40(self):
 
-        b = True
+        self.arq_saida.write(")")
 
         token = self.nextToken()
+        b = True
 
         while token.getTag() != Tag.FIM:
 
@@ -1776,9 +1927,10 @@ class Sintatico:
     # if-stmt -> if condition then* stmt-list else stm-list end
     def e41(self):
 
-        b = True
+        self.arq_saida.write("{\n")
 
         token = self.nextToken()
+        b = True
 
         while token.getTag() != Tag.FIM:
 
@@ -1792,6 +1944,8 @@ class Sintatico:
 
             #stmt -> assign-stmt
             elif token.getTag() == Tag.ASSIGNSTMT:
+                self.arq_saida.write(";\n")
+
                 aux = Word('STMT', Tag.STMT)
                 #aux = Token(Tag.STMT)
                 self.AddToken(aux)
@@ -1810,18 +1964,23 @@ class Sintatico:
 
             # stmt -> *readstmt
             elif token.getTag() == Tag.READSTMT:
+                self.arq_saida.write(');\n')
+
                 aux = Word('STMT', Tag.STMT)
                 #aux = Token(Tag.STMT)
                 self.AddToken(aux)
 
             # stmt => write-stmt
             elif token.getTag() == Tag.WRITESTMT:
+                self.arq_saida.write(');\n')
+
                 aux = Word('STMT', Tag.STMT)
                 #aux = Token(Tag.STMT)
                 self.AddToken(aux)
 
             # assign-stmt -> *identifier := simple_Expr
             elif token.getTag() == Tag.ID:
+                self.AddToken(token)
                 self.e17()
 
             # if-stmt -> *if condition then stmt-list end
@@ -1853,10 +2012,10 @@ class Sintatico:
     # if-stmt -> *if condition then stmt-list* else stm-list end
     def e42(self):
 
-        b = True
+        self.arq_saida.write("}\n")
 
         token = self.nextToken()
-
+        b = True
         while token.getTag() != Tag.FIM:
 
             # if-stmt -> *if condition then stmt-list* end
@@ -1885,9 +2044,10 @@ class Sintatico:
     # if-stmt -> if condition then stmt-list else *stm-list end
     def e43(self):
 
-        b = True
+        self.arq_saida.write("else{\n")
 
         token = self.nextToken()
+        b = True
 
         while token.getTag() != Tag.FIM:
 
@@ -1901,6 +2061,8 @@ class Sintatico:
 
             #stmt -> assign-stmt
             elif token.getTag() == Tag.ASSIGNSTMT:
+                self.arq_saida.write(";\n")
+
                 aux = Word('STMT', Tag.STMT)
                 #aux = Token(Tag.STMT)
                 self.AddToken(aux)
@@ -1919,18 +2081,23 @@ class Sintatico:
 
             # stmt -> *readstmt
             elif token.getTag() == Tag.READSTMT:
+                self.arq_saida.write(');\n')
+
                 aux = Word('STMT', Tag.STMT)
                 #aux = Token(Tag.STMT)
                 self.AddToken(aux)
 
             # stmt => write-stmt
             elif token.getTag() == Tag.WRITESTMT:
+                self.arq_saida.write(');\n')
+
                 aux = Word('STMT', Tag.STMT)
                 #aux = Token(Tag.STMT)
                 self.AddToken(aux)
 
             # assign-stmt -> *identifier := simple_Expr
             elif token.getTag() == Tag.ID:
+                self.AddToken(token)
                 b = self.e17() and b
 
             # if-stmt -> *if condition then stmt-list end
@@ -1961,9 +2128,10 @@ class Sintatico:
     # if-stmt -> if condition then stmt-list else stm-list *end
     def e44(self):
 
-        b = True
+        self.arq_saida.write("}\n")
 
         token = self.nextToken()
+        b = True
 
         while token.getTag() != Tag.FIM:
 
@@ -1985,13 +2153,14 @@ class Sintatico:
 
         return b
 
-    # simple_Expr -> (*simple_Expr) ? simple_Expr : simple_Expr
-    # factor -> (*expression)
+    # simple_Expr -> (*simple_Expr) ? simple_Expr : simple_Expr X
+    # factor -> (*expression) X
     def e45(self):
 
-        b = True
+        self.arq_saida.write("(")
 
         token = self.nextToken()
+        b = True
 
         while token.getTag() != Tag.FIM:
 
@@ -2049,12 +2218,16 @@ class Sintatico:
                 b = self.e31() and b
 
             elif token.getTag() == Tag.ID:
+                self.arq_saida.write(token.lexeme)
+
                 aux = Word('FACTOR', Tag.FACTOR)
                 #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
 
             # factor -> *constant
             elif token.getTag() == Tag.NUM:
+                self.arq_saida.write(token.lexeme)
+
                 aux = Word('FACTOR', Tag.FACTOR)
                 #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
@@ -2083,6 +2256,8 @@ class Sintatico:
 
             # expression -> simple_Expr relop* simple_Expr
             if token.getTag() == Tag.RELOP:
+                self.arq_saida.write(token.lexeme)
+
                 b = self.e26() and b
                 return b
 
@@ -2108,51 +2283,53 @@ class Sintatico:
 
             # simple_Expr -> simple_Expr addop* term
             elif token.getTag() == Tag.ADDOP:
+                self.arq_saida.write(token.lexeme)
+
                 b = self.e28() and b
                 return b
 
             elif token.getTag() == Tag.EQ:
-                aux = Word('RELOP', Tag.RELOP)
+                aux = Word(token.lexeme, Tag.RELOP)
                 #aux = Token(Tag.RELOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.GT:
-                aux = Word('RELOP', Tag.RELOP)
+                aux = Word(token.lexeme, Tag.RELOP)
                 #aux = Token(Tag.RELOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.GE:
-                aux = Word('RELOP', Tag.RELOP)
+                aux = Word(token.lexeme, Tag.RELOP)
                 #aux = Token(Tag.RELOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.LT:
-                aux = Word('RELOP', Tag.RELOP)
+                aux = Word(token.lexeme, Tag.RELOP)
                 #aux = Token(Tag.RELOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.LE:
-                aux = Word('RELOP', Tag.RELOP)
+                aux = Word(token.lexeme, Tag.RELOP)
                 #aux = Token(Tag.RELOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.NE:
-                aux = Word('RELOP', Tag.RELOP)
+                aux = Word("!=", Tag.RELOP)
                 #aux = Token(Tag.RELOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.ADD:
-                aux = Word('ADDOP', Tag.ADDOP)
+                aux = Word(token.lexeme, Tag.ADDOP)
                 #aux = Token(Tag.ADDOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.SUB:
-                aux = Word('ADDOP', Tag.ADDOP)
+                aux = Word(token.lexeme, Tag.ADDOP)
                 #aux = Token(Tag.ADDOP)
                 self.AddToken(aux)
 
             elif token.getTag() == Tag.OR:
-                aux = Word('ADDOP', Tag.ADDOP)
+                aux = Word(token.lexeme, Tag.ADDOP)
                 #aux = Token(Tag.ADDOP)
                 self.AddToken(aux)
 
@@ -2171,9 +2348,10 @@ class Sintatico:
     # simple_Expr -> (simple_Expr ) *? simple_Expr : simple_Expr
     def e47(self):
 
-        b = True
+        self.arq_saida.write(")")
 
         token = self.nextToken()
+        b = True
 
         while token.getTag() != Tag.FIM:
 
@@ -2193,9 +2371,10 @@ class Sintatico:
     # simple_Expr -> (simple_Expr) ?* simple_Expr : simple_Expr
     def e48(self):
 
-        b = True
+        self.arq_saida.write("?")
 
         token = self.nextToken()
+        b = True
 
         while token.getTag() != Tag.FIM:
 
@@ -2236,12 +2415,16 @@ class Sintatico:
                 b = self.e31() and b
 
             elif token.getTag() == Tag.ID:
+                self.arq_saida.write(token.lexeme)
+
                 aux = Word('FACTOR', Tag.FACTOR)
                 #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
 
             # factor -> *constant
             elif token.getTag() == Tag.NUM:
+                self.arq_saida.write(token.lexeme)
+
                 aux = Word('FACTOR', Tag.FACTOR)
                 #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
@@ -2259,9 +2442,10 @@ class Sintatico:
     # simple_Expr -> simple_Expr *addop term
     def e49(self):
 
-        b = True
+        self.arq_saida.write(":")
 
         token = self.nextToken()
+        b = True
 
         while token.getTag() != Tag.FIM:
 
@@ -2350,12 +2534,16 @@ class Sintatico:
                 b = self.e31() and b
 
             elif token.getTag() == Tag.ID:
+                self.arq_saida.write(token.lexeme)
+
                 aux = Word('FACTOR', Tag.FACTOR)
                 #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)
 
             # factor -> *constant
             elif token.getTag() == Tag.NUM:
+                self.arq_saida.write(token.lexeme)
+
                 aux = Word('FACTOR', Tag.FACTOR)
                 #aux = Token(Tag.FACTOR)
                 self.AddToken(aux)

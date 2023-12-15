@@ -241,8 +241,8 @@ class Lexico:
             print(f"O arquivo '{self.arq}' não foi encontrado.")
 
     def reserve(self, Word):
-
         teste = [Word.lexeme, Word.tag]
+
 
         self.Env.put(Word.lexeme, teste)
 

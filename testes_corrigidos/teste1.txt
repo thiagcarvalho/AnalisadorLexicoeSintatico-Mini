@@ -9,5 +9,3 @@ begin
     result := (a * c)/(b + 5 mod 345 -3);
     write(result);
 end
-
-
