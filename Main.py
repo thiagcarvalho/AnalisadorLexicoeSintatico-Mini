@@ -58,12 +58,6 @@ def testeSintatico(entrada, saida):
         else:
             print(f'Lexema: {key} Tag: {id}')
 
-    compile(S.arq_saida)
-
-def compile(arq):
-
-    command = f'g++ {arq}.cpp -o {arq}.exe'
-    os.system(command)
 
 
 arq = "testes_corrigidos/teste1.txt"  # Substitua pelo caminho do seu arquivo de texto
@@ -74,7 +68,7 @@ arq_saida = f"{arq_saida}_codigo"
 
 #testeLexico(arq)
 testeSintatico(arq, arq_saida)
-#compile(arq_saida)
+
 
 
 

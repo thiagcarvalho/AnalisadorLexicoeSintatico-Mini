@@ -277,7 +277,6 @@ class Sintatico:
         b = True
 
         token = self.nextToken()
-        print(f'to aqui {token.lexeme}')
 
         while token.getTag() != Tag.FIM:
 
